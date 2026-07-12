@@ -18,12 +18,12 @@
     --warn:         #fbbf24;
     --danger:       #f87171;
 
-    --gradient-main:  linear-gradient(135deg, var(--cyan), var(--violet));
-    --gradient-glow:  radial-gradient(ellipse 80% 60% at 50% -20%, rgba(34,211,238,0.16), transparent);
+    --gradient-main: linear-gradient(135deg, var(--cyan), var(--violet));
+    --gradient-glow: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(34,211,238,0.16), transparent);
 
-    --font-display: 'Syne', sans-serif;
+    --font-display: 'Verdana', sans-serif;
     --font-body:    'DM Sans', sans-serif;
-    --font-mono:    'Space Mono', monospace;
+    --font-mono:    'Gill Sans', monospace;
 }
 
 html { scroll-behavior: smooth; }
