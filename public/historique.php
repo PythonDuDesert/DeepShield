@@ -22,6 +22,7 @@ if ($dbError === null) {
 <title>Historique — DeepShield</title>
 <link href="assets/css/site.css" rel="stylesheet">
 <link href="assets/css/app.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/images/bouclier.ico" type="image/x-icon">
 </head>
 <body>
 
@@ -37,11 +38,11 @@ if ($dbError === null) {
     </div>
 
     <?php if ($dbError !== null): ?>
-      <div class="notice">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+      <div class="notice"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"> Base de données injoignable : <?= e($dbError) ?></div>
     <?php else: ?>
 
     <?php if ($flash): ?>
-      <div class="notice" style="margin-bottom:18px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);">🛑 <?= e($flash['message']) ?></div>
+      <div class="notice" style="margin-bottom:18px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"> <?= e($flash['message']) ?></div>
     <?php endif; ?>
 
     <div class="panel" style="margin-bottom:18px;">
@@ -56,7 +57,7 @@ if ($dbError === null) {
     <section class="panel">
       <?php if (empty($all)): ?>
         <div class="empty-state">
-          <div class="emoji">🗂️</div>
+          <img src="../../public/assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
           <p>Aucune analyse ne correspond à ce filtre.</p>
           <a href="analyser.php" class="btn-primary" style="margin-top:14px;">Lancer une analyse</a>
         </div>

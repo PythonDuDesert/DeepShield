@@ -138,6 +138,7 @@ $faqCategories = [
 <title>FAQ — DeepShield</title>
 <link href="assets/css/site.css" rel="stylesheet">
 <link href="assets/css/app.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/images/bouclier.ico" type="image/x-icon">
 </head>
 <body>
 

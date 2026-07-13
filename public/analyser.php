@@ -13,6 +13,7 @@ $flash = ds_flash_get();
 <title>Nouvelle analyse — DeepShield</title>
 <link href="assets/css/site.css" rel="stylesheet">
 <link href="assets/css/app.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/images/bouclier.ico" type="image/x-icon">
 </head>
 <body>
 
@@ -28,9 +29,9 @@ $flash = ds_flash_get();
     </div>
 
     <?php if ($dbError !== null): ?>
-      <div class="notice" style="margin-bottom:22px;">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+      <div class="notice" style="margin-bottom:22px;"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"> Base de données injoignable : <?= e($dbError) ?></div>
     <?php elseif ($flash): ?>
-      <div class="notice" style="margin-bottom:22px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);">🛑 <?= e($flash['message']) ?></div>
+      <div class="notice" style="margin-bottom:22px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"> <?= e($flash['message']) ?></div>
     <?php endif; ?>
 
     <div class="dash-grid">

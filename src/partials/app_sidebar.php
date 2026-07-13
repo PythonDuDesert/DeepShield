@@ -1,6 +1,8 @@
 <?php
 // Déterminer la page active
 $current_page = basename($_SERVER['PHP_SELF']);
+
+$currentUser = ($auth !== null) ? $auth->currentUser() : null;
 ?>
 
 <!-- Menu vertical -->
@@ -57,12 +59,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
     </nav>
 
-    <!-- Bouton Signaler - en bas de la sidebar -->
-    <div class="nav-divider"></div>
-    <a href="assistance.php" class="nav-item nav-assistance-btn" title="Signaler un problème ou demander de l'aide">
-        <div class="nav-icon">
-            <span class="assistance-icon">💬</span>
+    <div class="app-sidebar-footer">
+        <div class="user-pill">
+            <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'], 0, 1) . substr($currentUser['last_name'], 0, 1))) ?></span>
+            <div class="user-pill-info">
+                <span class="user-name"><?= e($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></span>
+                <span class="user-email"><?= e($currentUser['email']) ?></span>
+            </div>
         </div>
-        <span>Signaler</span>
-    </a>
+        <a href="logout.php" class="nav-item" style="margin-bottom:-25px;">
+            <span class="app-nav-icon"><img src="../../public/assets/images/logout.png" alt="Logout" style="width:25px; height:25px; object-fit:contain;"></span>
+            <span>Se déconnecter</span>
+        </a>
+        <a href="assistance.php" class="nav-item nav-assistance-btn" title="Signaler un problème ou demander de l'aide">
+            <div class="nav-icon">
+                <span class="assistance-icon">💬</span>
+            </div>
+            <span>Signaler</span>
+        </a>
+    </div>
 </div>
