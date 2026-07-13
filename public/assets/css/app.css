@@ -227,12 +227,6 @@
 .app-nav-icon { font-size: 1.05em; width: 20px; text-align: center; }
 .app-sidebar-footer { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
 .app-nav-exit { color: var(--text-muted); }
-.demo-pill {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 0.74em; color: var(--text-muted);
-    padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-}
 .user-pill {
     display: flex; align-items: center; gap: 10px;
     padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,0.03);
@@ -248,14 +242,6 @@
 .user-name { font-size: 0.82em; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .user-email { font-size: 0.72em; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.app-main { flex: 1; min-width: 0; padding: 40px 44px 70px; max-width: 1180px; }
-@media (max-width: 900px) {
-    .app-sidebar { position: fixed; left: 0; bottom: 0; top: auto; width: 100%; height: auto; flex-direction: row; padding: 8px; z-index: 50; }
-    .app-sidebar-logo, .app-sidebar-footer { display: none; }
-    .app-nav { flex-direction: row; justify-content: space-around; width: 100%; }
-    .app-nav-item { flex-direction: column; gap: 3px; font-size: 0.7em; padding: 8px 6px; }
-    .app-main { padding: 26px 18px 90px; }
-}
 
 /* HEADER */
 .header-logo {
