@@ -2,7 +2,49 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'login';
+
+// Si déjà connecté, direction le dashboard.
+if ($dbError === null && $auth !== null && $auth->isLoggedIn()) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+$loginError = null;
+$registerError = null;
+$registerSuccess = false;
 $initialTab = ($_GET['tab'] ?? '') === 'register' ? 'register' : 'login';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'login') {
+        $initialTab = 'login';
+        $email = trim($_POST['email'] ?? '');
+        $password = (string) ($_POST['password'] ?? '');
+        $result = $auth->login($email, $password, ds_client_ip());
+        if ($result['success']) {
+            header('Location: dashboard.php');
+            exit;
+        }
+        $loginError = $result['error'];
+    }
+
+    if ($action === 'register') {
+        $initialTab = 'register';
+        $result = $auth->register(
+            trim($_POST['email'] ?? ''),
+            (string) ($_POST['password'] ?? ''),
+            trim($_POST['first_name'] ?? ''),
+            trim($_POST['last_name'] ?? '')
+        );
+        if ($result['success']) {
+            $registerSuccess = true;
+            $initialTab = 'login';
+        } else {
+            $registerError = $result['error'];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -35,63 +77,68 @@ $initialTab = ($_GET['tab'] ?? '') === 'register' ? 'register' : 'login';
         <p>Espace de conformité KYC — accès anti-usurpation</p>
     </div>
 
-    <div class="auth-tabs">
-        <div class="auth-tab" id="tab-login" onclick="switchTab('login')">Connexion</div>
-        <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Inscription</div>
-    </div>
+    <?php if ($dbError !== null): ?>
+      <div class="auth-notice" style="margin-top:0;">
+        <span class="icon">🛑</span>
+        <span>Base de données injoignable pour le moment. <?= e($dbError) ?></span>
+      </div>
+    <?php else: ?>
 
-    <!-- Connexion -->
-    <form class="auth-panel" id="panel-login" onsubmit="return handleAuthSubmit(event)">
-        <div class="auth-field">
-            <label for="login-email">Adresse e-mail professionnelle</label>
-            <input type="email" id="login-email" placeholder="prenom.nom@organisme.fr" autocomplete="email">
+      <?php if ($registerSuccess): ?>
+        <div class="auth-notice" style="border-color:var(--ok);background:rgba(52,211,153,0.08);color:var(--ok);margin-top:0;">
+          <span class="icon">✅</span>
+          <span>Compte créé avec succès. Vous pouvez maintenant vous connecter ci-dessous.</span>
         </div>
-        <div class="auth-field">
-            <label for="login-password">Mot de passe</label>
-            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
-        </div>
-        <button type="submit" class="auth-submit">Se connecter</button>
+      <?php endif; ?>
 
-        <div class="auth-notice">
-            <span class="icon">🔧</span>
-            <span>Les comptes ne sont pas encore activés (voir planning, phases API &amp; dashboard). Utilisez l'accès démo ci-dessous pour visiter la plateforme.</span>
-        </div>
-    </form>
+      <div class="auth-tabs">
+          <div class="auth-tab" id="tab-login" onclick="switchTab('login')">Connexion</div>
+          <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Inscription</div>
+      </div>
 
-    <!-- Inscription -->
-    <form class="auth-panel" id="panel-register" onsubmit="return handleAuthSubmit(event)">
-        <div class="auth-field">
-            <label for="reg-name">Nom complet</label>
-            <input type="text" id="reg-name" placeholder="Jean Dupont" autocomplete="name">
-        </div>
-        <div class="auth-field">
-            <label for="reg-org">Organisme</label>
-            <input type="text" id="reg-org" placeholder="Nom de votre organisme" autocomplete="organization">
-        </div>
-        <div class="auth-field">
-            <label for="reg-email">Adresse e-mail professionnelle</label>
-            <input type="email" id="reg-email" placeholder="prenom.nom@organisme.fr" autocomplete="email">
-        </div>
-        <div class="auth-field">
-            <label for="reg-password">Mot de passe</label>
-            <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password">
-        </div>
-        <button type="submit" class="auth-submit">Créer mon compte</button>
+      <!-- Connexion -->
+      <form class="auth-panel" id="panel-login" method="post" action="login.php">
+          <input type="hidden" name="action" value="login">
+          <?php if ($loginError): ?><p class="error" style="margin-bottom:10px;"><?= e($loginError) ?></p><?php endif; ?>
+          <div class="auth-field">
+              <label for="login-email">Adresse e-mail</label>
+              <input type="email" id="login-email" name="email" placeholder="prenom.nom@organisme.fr" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
+          </div>
+          <div class="auth-field">
+              <label for="login-password">Mot de passe</label>
+              <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="auth-submit">Se connecter</button>
+      </form>
 
-        <div class="auth-notice">
-            <span class="icon">🔧</span>
-            <span>L'inscription n'est pas encore ouverte. Utilisez l'accès démo ci-dessous pour visiter la plateforme sans créer de compte.</span>
-        </div>
-    </form>
+      <!-- Inscription -->
+      <form class="auth-panel" id="panel-register" method="post" action="login.php">
+          <input type="hidden" name="action" value="register">
+          <?php if ($registerError): ?><p class="error" style="margin-bottom:10px;"><?= e($registerError) ?></p><?php endif; ?>
+          <div class="auth-field">
+              <label for="reg-first-name">Prénom</label>
+              <input type="text" id="reg-first-name" name="first_name" placeholder="Jean" autocomplete="given-name" required value="<?= e($_POST['first_name'] ?? '') ?>">
+          </div>
+          <div class="auth-field">
+              <label for="reg-last-name">Nom</label>
+              <input type="text" id="reg-last-name" name="last_name" placeholder="Dupont" autocomplete="family-name" required value="<?= e($_POST['last_name'] ?? '') ?>">
+          </div>
+          <div class="auth-field">
+              <label for="reg-email">Adresse e-mail</label>
+              <input type="email" id="reg-email" name="email" placeholder="prenom.nom@organisme.fr" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
+          </div>
+          <div class="auth-field">
+              <label for="reg-password">Mot de passe (8 caractères minimum)</label>
+              <input type="password" id="reg-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+          </div>
+          <button type="submit" class="auth-submit">Créer mon compte</button>
+      </form>
 
-    <div class="auth-divider">ou</div>
-    <a href="dashboard.php" class="demo-btn">🔎 Essayer la démo (accès libre)</a>
+    <?php endif; ?>
 
     <div class="auth-back"><a href="index.php">← Retour à l'accueil</a></div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script src="assets/js/site.js"></script>
 <script>
@@ -103,19 +150,6 @@ function switchTab(tab) {
     history.replaceState(null, '', tab === 'register' ? 'login.php?tab=register' : 'login.php');
 }
 switchTab('<?= $initialTab === 'register' ? 'register' : 'login' ?>');
-
-function showToast(message) {
-    var toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(function () { toast.classList.remove('show'); }, 3200);
-}
-
-function handleAuthSubmit(evt) {
-    evt.preventDefault();
-    showToast('Authentification bientôt disponible — essayez l\'accès démo ci-dessous ⤵');
-    return false;
-}
 </script>
 </body>
 </html>

@@ -19,9 +19,9 @@ final class ReportStore
         }
     }
 
-    public function save(array $report): string
+    public function save(array $report, ?string $id = null): string
     {
-        $id = ds_uuid();
+        $id = $id ?? ds_uuid();
         $report['id'] = $id;
         $path = $this->pathFor($id);
         file_put_contents($path, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
@@ -30,7 +30,7 @@ final class ReportStore
 
     public function load(string $id): ?array
     {
-        if (!preg_match('/^[a-f0-9\-]{36}$/', $id)) {
+        if (!preg_match('/^([a-f0-9\-]{36}|\d{1,20})$/', $id)) {
             return null;
         }
         $path = $this->pathFor($id);

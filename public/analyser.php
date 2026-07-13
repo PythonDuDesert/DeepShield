@@ -2,6 +2,8 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'analyser';
+ds_require_login($auth, $dbError);
+$flash = ds_flash_get();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -24,6 +26,12 @@ $navActive = 'analyser';
       <h1>Nouvelle analyse</h1>
       <p>Déposez une vidéo et/ou un audio à faire vérifier par le moteur de détection.</p>
     </div>
+
+    <?php if ($dbError !== null): ?>
+      <div class="notice" style="margin-bottom:22px;">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+    <?php elseif ($flash): ?>
+      <div class="notice" style="margin-bottom:22px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);">🛑 <?= e($flash['message']) ?></div>
+    <?php endif; ?>
 
     <div class="dash-grid">
       <section class="panel">

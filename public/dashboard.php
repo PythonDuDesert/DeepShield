@@ -3,10 +3,19 @@ declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'dashboard';
 
+ds_require_login($auth, $dbError);
+
 $flash = ds_flash_get();
-$store = new ReportStore($config['reports_dir']);
-$stats = $store->stats();
-$recent = $store->listRecent(6);
+$stats = ['total' => 0, 'reel' => 0, 'suspect' => 0, 'deepfake' => 0, 'score_moyen' => 0.0];
+$recent = [];
+$user = null;
+
+if ($dbError === null) {
+    $user = $auth->currentUser();
+    $videos = new VideoRepository($pdo);
+    $stats = $videos->statsByUser((int) $user['id']);
+    $recent = $videos->listByUser((int) $user['id'], 6);
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -27,10 +36,12 @@ $recent = $store->listRecent(6);
   <main class="app-main">
     <div class="app-page-head">
       <h1>Tableau de bord</h1>
-      <p>Vue d'ensemble de l'activité de détection — accès démonstration, sans authentification pour le moment.</p>
+      <p>Vue d'ensemble de vos analyses<?= $user ? ', ' . e($user['first_name']) : '' ?>.</p>
     </div>
 
-    <?php if ($flash): ?>
+    <?php if ($dbError !== null): ?>
+      <div class="notice" style="margin-bottom:22px;">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+    <?php elseif ($flash): ?>
       <div class="notice" style="margin-bottom:22px;"><?= e($flash['message']) ?></div>
     <?php endif; ?>
 
@@ -73,7 +84,7 @@ $recent = $store->listRecent(6);
       <div class="panel">
         <p class="muted">
           Déposez une vidéo et/ou un audio depuis la page <a href="analyser.php" style="color:var(--cyan-bright)">Nouvelle analyse</a>.
-          Temps de traitement moyen observé&nbsp;: <strong style="color:var(--text-main)"><?= $stats['temps_moyen'] > 0 ? number_format($stats['temps_moyen'], 2) . ' s' : '—' ?></strong>.
+          Score de confiance « réel » moyen sur vos analyses&nbsp;: <strong style="color:var(--text-main)"><?= $stats['total'] > 0 ? number_format((float) $stats['score_moyen'], 1) . '%' : '—' ?></strong>.
         </p>
       </div>
     </div>
@@ -94,12 +105,12 @@ $recent = $store->listRecent(6);
           <table class="table">
             <thead><tr><th>Date</th><th>Fichier</th><th>Verdict</th><th></th></tr></thead>
             <tbody>
-              <?php foreach ($recent as $r): ?>
+              <?php foreach ($recent as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>
                 <tr>
-                  <td><?= e(substr($r['generated_at'], 0, 16)) ?></td>
-                  <td><?= e($r['filename']) ?></td>
-                  <td><span class="badge <?= ds_verdict_class($r['verdict']) ?>"><?= e($r['verdict']) ?></span></td>
-                  <td><a class="btn-ghost" href="report.php?id=<?= e($r['id']) ?>">Voir</a></td>
+                  <td><?= e(substr((string) $r['uploaded_at'], 0, 16)) ?></td>
+                  <td><?= e($r['video_name']) ?></td>
+                  <td><span class="badge <?= ds_verdict_class($verdict) ?>"><?= e($verdict) ?></span></td>
+                  <td><a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir</a></td>
                 </tr>
               <?php endforeach; ?>
             </tbody>

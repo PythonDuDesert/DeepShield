@@ -134,7 +134,7 @@ $navActive = 'home';
         <div class="step reveal">
             <div class="step-number">01</div>
             <h3>Connexion</h3>
-            <p>Accédez à votre espace via votre compte (bientôt disponible — démo ouverte pour l'instant).</p>
+            <p>Créez votre compte ou connectez-vous pour accéder à votre espace d'analyse.</p>
         </div>
         <div class="step reveal">
             <div class="step-number">02</div>
@@ -163,7 +163,7 @@ $navActive = 'home';
 <section class="cta">
     <div class="cta-card reveal">
         <h2>Explorez la plateforme dès maintenant</h2>
-        <p>Les comptes ne sont pas encore activés — un accès de démonstration libre est disponible pour visiter le dashboard.</p>
+        <p>Créez un compte gratuitement pour accéder au dashboard et lancer votre première analyse.</p>
         <a href="login.php" class="btn-primary">Accéder à la plateforme</a>
     </div>
 </section>

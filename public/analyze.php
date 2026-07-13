@@ -2,7 +2,15 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 
+ds_require_login($auth, $dbError);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: analyser.php');
+    exit;
+}
+
+if ($dbError !== null) {
+    ds_flash_set('error', "Impossible de lancer une analyse : base de données injoignable.");
     header('Location: analyser.php');
     exit;
 }
@@ -51,6 +59,8 @@ function ds_handle_upload(string $fieldName, array $allowedExt, int $maxBytes, s
 }
 
 $store = new ReportStore($config['reports_dir']);
+$videos = new VideoRepository($pdo);
+$user = $auth->currentUser();
 
 try {
     $videoPath = ds_handle_upload('video_file', $config['video_extensions'], $config['max_upload_bytes'], $config['upload_dir']);
@@ -59,6 +69,8 @@ try {
     if ($videoPath === null && $audioPath === null) {
         throw new RuntimeException("Veuillez fournir au moins un fichier vidéo ou audio.");
     }
+
+    $originalVideoSize = $videoPath !== null ? (int) ($_FILES['video_file']['size'] ?? 0) : 0;
 
     $maxFrames = max(5, min(120, (int) ($_POST['max_frames'] ?? $config['max_frames'])));
     $threshold = max(1.0, min(99.0, (float) ($_POST['threshold'] ?? $config['threshold'])));
@@ -71,20 +83,50 @@ try {
     $runner = new AnalysisRunner($runnerConfig);
     $report = $runner->run($videoPath, $audioPath);
 
-    // Le bridge Python ne connaît que le nom de fichier temporaire (UUID) ;
-    // on réaffiche le nom d'origine choisi par l'utilisateur dans le rapport.
     if (!empty($report['video']) && !empty($_FILES['video_file']['name'])) {
         $report['video']['filename'] = $_FILES['video_file']['name'];
     }
     if (!empty($report['audio']) && !empty($_FILES['audio_file']['name'])) {
         $report['audio']['filename'] = $_FILES['audio_file']['name'];
     }
-
+    $report['user_id'] = $user['id'];
     $report['uploaded_files'] = [
         'video_original_name' => $_FILES['video_file']['name'] ?? null,
         'audio_original_name' => $_FILES['audio_file']['name'] ?? null,
         'kept_for_retraining' => $keepForRetraining,
     ];
+
+    $isSuccess = ($report['status'] ?? 'error') === 'ok';
+
+    // Persistance en base : uniquement pour la modalité vidéo (table `videos`
+    // du schéma fourni). Une analyse audio seule reste consultable via son
+    // rapport JSON mais n'apparaît pas dans l'historique lié à la base.
+    if ($isSuccess && !empty($report['video'])) {
+        $verdict = $report['video']['verdict'];
+        $scoreReal = (int) round((float) $report['video']['avg_real']);
+        $nSuspect = count(array_filter($report['video']['frames'] ?? [], fn($f) => !empty($f['suspect'])));
+        $explinations = sprintf(
+            '%s — score réel %.1f%%, %d frame(s) suspecte(s) sur %d analysée(s)',
+            $verdict,
+            (float) $report['video']['avg_real'],
+            $nSuspect,
+            (int) $report['video']['n_frames_analyzed']
+        );
+
+        $videoId = $videos->insert(
+            (int) $user['id'],
+            $report['video']['filename'],
+            $originalVideoSize,
+            $user['email'],
+            $scoreReal,
+            $explinations
+        );
+
+        $id = $store->save($report, (string) $videoId);
+    } else {
+        // Échec, ou audio seul : rapport horodaté sans ligne `videos` associée.
+        $id = $store->save($report);
+    }
 
     // Exigence 5.2 : suppression des fichiers biométriques après analyse,
     // sauf consentement explicite au ré-entraînement.
@@ -96,7 +138,6 @@ try {
         }
     }
 
-    $id = $store->save($report);
     header('Location: report.php?id=' . urlencode($id));
     exit;
 } catch (Throwable $e) {

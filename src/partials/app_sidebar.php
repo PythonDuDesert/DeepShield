@@ -1,6 +1,8 @@
 <?php
 /** @var string $navActive Page active : 'dashboard' | 'analyser' | 'historique' | 'faq' */
+/** @var Auth|null $auth */
 $navActive = $navActive ?? '';
+$currentUser = ($auth !== null) ? $auth->currentUser() : null;
 $navItems = [
     'dashboard'  => ['href' => 'dashboard.php',  'label' => 'Dashboard',        'icon' => '📊'],
     'analyser'   => ['href' => 'analyser.php',   'label' => 'Nouvelle analyse', 'icon' => '🔍'],
@@ -32,10 +34,28 @@ $navItems = [
     </nav>
 
     <div class="app-sidebar-footer">
-        <div class="demo-pill">
-            <span class="hero-badge-dot"></span>
-            Mode démonstration
-        </div>
+        <?php if ($currentUser): ?>
+            <div class="user-pill">
+                <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'], 0, 1) . substr($currentUser['last_name'], 0, 1))) ?></span>
+                <div class="user-pill-info">
+                    <span class="user-name"><?= e($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></span>
+                    <span class="user-email"><?= e($currentUser['email']) ?></span>
+                </div>
+            </div>
+            <a href="logout.php" class="app-nav-item app-nav-exit">
+                <span class="app-nav-icon">↩</span>
+                <span>Se déconnecter</span>
+            </a>
+        <?php else: ?>
+            <div class="demo-pill">
+                <span class="hero-badge-dot"></span>
+                Lecture seule — non connecté
+            </div>
+            <a href="login.php" class="app-nav-item app-nav-exit">
+                <span class="app-nav-icon">→</span>
+                <span>Se connecter</span>
+            </a>
+        <?php endif; ?>
         <a href="index.php" class="app-nav-item app-nav-exit">
             <span class="app-nav-icon">←</span>
             <span>Retour à l'accueil</span>

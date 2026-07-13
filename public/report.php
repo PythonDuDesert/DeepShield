@@ -3,12 +3,27 @@ declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'historique';
 
+ds_require_login($auth, $dbError);
+
+if ($dbError !== null) {
+    ds_flash_set('error', "Base de données injoignable : $dbError");
+    header('Location: dashboard.php');
+    exit;
+}
+
 $id = $_GET['id'] ?? '';
 $store = new ReportStore($config['reports_dir']);
 $report = $store->load($id);
 
 if ($report === null) {
     ds_flash_set('error', "Rapport introuvable ou identifiant invalide.");
+    header('Location: historique.php');
+    exit;
+}
+
+$currentUser = $auth->currentUser();
+if (isset($report['user_id']) && (int) $report['user_id'] !== (int) $currentUser['id']) {
+    ds_flash_set('error', "Ce rapport appartient à un autre compte.");
     header('Location: historique.php');
     exit;
 }

@@ -63,6 +63,14 @@ final class AnalysisRunner
             2 => ['pipe', 'w'],
         ];
 
+        if (!function_exists('proc_open')) {
+            return $this->errorReport(
+                "La fonction PHP proc_open() est désactivée sur ce serveur (fréquent sur " .
+                "l'hébergement mutualisé). Elle est indispensable pour lancer le moteur Python. " .
+                "Contactez votre hébergeur pour l'activer, ou testez en local (XAMPP/WAMP/MAMP)."
+            );
+        }
+
         $process = proc_open($cmd, $descriptorSpec, $pipes, $this->config['root_dir'], $env);
 
         if (!is_resource($process)) {

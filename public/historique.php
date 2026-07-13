@@ -3,12 +3,15 @@ declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'historique';
 
-$store = new ReportStore($config['reports_dir']);
-$all = $store->listRecent(200);
+ds_require_login($auth, $dbError);
 
+$flash = ds_flash_get();
 $filter = $_GET['verdict'] ?? '';
-if ($filter !== '') {
-    $all = array_values(array_filter($all, fn($r) => $r['verdict'] === $filter));
+$all = [];
+if ($dbError === null) {
+    $user = $auth->currentUser();
+    $videos = new VideoRepository($pdo);
+    $all = $videos->listByUser((int) $user['id'], 200, $filter);
 }
 ?>
 <!DOCTYPE html>
@@ -30,15 +33,23 @@ if ($filter !== '') {
   <main class="app-main">
     <div class="app-page-head">
       <h1>Historique des analyses</h1>
-      <p>Toutes les analyses réalisées en mode démonstration sur cet environnement.</p>
+      <p>Toutes les analyses réalisées sur votre compte.</p>
     </div>
+
+    <?php if ($dbError !== null): ?>
+      <div class="notice">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+    <?php else: ?>
+
+    <?php if ($flash): ?>
+      <div class="notice" style="margin-bottom:18px;border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);">🛑 <?= e($flash['message']) ?></div>
+    <?php endif; ?>
 
     <div class="panel" style="margin-bottom:18px;">
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <a href="historique.php" class="btn-ghost <?= $filter === '' ? 'active' : '' ?>">Tous</a>
-        <a href="historique.php?verdict=RÉEL" class="btn-ghost">RÉEL</a>
-        <a href="historique.php?verdict=SUSPECT" class="btn-ghost">SUSPECT</a>
-        <a href="historique.php?verdict=DEEPFAKE" class="btn-ghost">DEEPFAKE</a>
+        <a href="historique.php" class="btn-ghost"><?= $filter === '' ? '● ' : '' ?>Tous</a>
+        <a href="historique.php?verdict=R%C3%89EL" class="btn-ghost"><?= $filter === 'RÉEL' ? '● ' : '' ?>RÉEL</a>
+        <a href="historique.php?verdict=SUSPECT" class="btn-ghost"><?= $filter === 'SUSPECT' ? '● ' : '' ?>SUSPECT</a>
+        <a href="historique.php?verdict=DEEPFAKE" class="btn-ghost"><?= $filter === 'DEEPFAKE' ? '● ' : '' ?>DEEPFAKE</a>
       </div>
     </div>
 
@@ -51,21 +62,23 @@ if ($filter !== '') {
         </div>
       <?php else: ?>
         <table class="table">
-          <thead><tr><th>Date</th><th>Fichier</th><th>Verdict</th><th>Statut</th><th></th></tr></thead>
+          <thead><tr><th>Date</th><th>Fichier</th><th>Taille</th><th>Verdict</th><th></th></tr></thead>
           <tbody>
-            <?php foreach ($all as $r): ?>
+            <?php foreach ($all as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>
               <tr>
-                <td><?= e(str_replace('T', ' ', substr($r['generated_at'], 0, 19))) ?></td>
-                <td><?= e($r['filename']) ?></td>
-                <td><span class="badge <?= ds_verdict_class($r['verdict']) ?>"><?= e($r['verdict']) ?></span></td>
-                <td><?= $r['status'] === 'ok' ? 'OK' : '<span style="color:var(--danger)">Erreur</span>' ?></td>
-                <td><a class="btn-ghost" href="report.php?id=<?= e($r['id']) ?>">Voir le rapport</a></td>
+                <td><?= e((string) $r['uploaded_at']) ?></td>
+                <td><?= e($r['video_name']) ?></td>
+                <td><?= e(ds_format_bytes((int) $r['file_size'])) ?></td>
+                <td><span class="badge <?= ds_verdict_class($verdict) ?>"><?= e($verdict) ?></span></td>
+                <td><a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
       <?php endif; ?>
     </section>
+
+    <?php endif; ?>
   </main>
 </div>
 

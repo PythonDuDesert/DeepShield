@@ -16,10 +16,24 @@ if ($returnCode === 0 && !empty($out)) {
 
 $bridgeOk = is_file($config['bridge_script']);
 
+$dbOk = false;
+if ($dbError === null && $pdo !== null) {
+    try {
+        $pdo->query('SELECT 1');
+        $dbOk = true;
+    } catch (Throwable $e) {
+        $dbOk = false;
+    }
+}
+
+$procOpenOk = function_exists('proc_open') && !in_array('proc_open', array_map('trim', explode(',', (string) ini_get('disable_functions'))), true);
+
 echo json_encode([
-    'status' => ($pythonOk && $bridgeOk) ? 'ok' : 'degraded',
+    'status' => ($pythonOk && $bridgeOk && $dbOk && $procOpenOk) ? 'ok' : 'degraded',
     'time' => gmdate('c'),
     'python' => ['reachable' => $pythonOk, 'version' => $pythonVersion],
     'bridge_script_found' => $bridgeOk,
+    'proc_open_available' => $procOpenOk,
+    'database' => ['reachable' => $dbOk, 'error' => $dbError],
     'mock_mode' => $config['mock_mode'],
 ], JSON_PRETTY_PRINT);
