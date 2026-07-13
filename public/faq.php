@@ -9,7 +9,7 @@ $navActive = 'faq';
  */
 $faqCategories = [
     [
-        'title' => '🚀 Utilisation de base',
+        'title' => 'Utilisation de base',
         'items' => [
             [
                 'q' => "Comment lancer une analyse ?",
@@ -35,7 +35,7 @@ $faqCategories = [
         ],
     ],
     [
-        'title' => '📊 Comprendre les résultats',
+        'title' => 'Comprendre les résultats',
         'items' => [
             [
                 'q' => "Que signifient les verdicts RÉEL, SUSPECT et DEEPFAKE ?",
@@ -64,7 +64,7 @@ $faqCategories = [
         ],
     ],
     [
-        'title' => '🔒 Confidentialité des données',
+        'title' => 'Confidentialité des données',
         'items' => [
             [
                 'q' => "Mes fichiers vidéo/audio sont-ils conservés ?",
@@ -86,7 +86,7 @@ $faqCategories = [
         ],
     ],
     [
-        'title' => '👤 Compte et accès',
+        'title' => 'Compte et accès',
         'items' => [
             [
                 'q' => "Pourquoi la connexion ne fonctionne pas encore ?",
@@ -106,7 +106,7 @@ $faqCategories = [
         ],
     ],
     [
-        'title' => '⚠️ Limites connues',
+        'title' => 'Limites connues',
         'items' => [
             [
                 'q' => "L'analyse audio est-elle disponible ?",
@@ -176,7 +176,6 @@ $faqCategories = [
       <?php endforeach; ?>
 
       <div class="faq-empty" id="faqEmpty">
-        <div class="emoji" style="font-size:2em;margin-bottom:10px;">🔍</div>
         <p>Aucune question ne correspond à votre recherche.</p>
       </div>
     </div>

@@ -1,64 +1,68 @@
 <?php
-/** @var string $navActive Page active : 'dashboard' | 'analyser' | 'historique' | 'faq' */
-/** @var Auth|null $auth */
-$navActive = $navActive ?? '';
-$currentUser = ($auth !== null) ? $auth->currentUser() : null;
-$navItems = [
-    'dashboard'  => ['href' => 'dashboard.php',  'label' => 'Dashboard',        'icon' => '📊'],
-    'analyser'   => ['href' => 'analyser.php',   'label' => 'Nouvelle analyse', 'icon' => '🔍'],
-    'historique' => ['href' => 'historique.php', 'label' => 'Historique',       'icon' => '🗂️'],
-    'faq'        => ['href' => 'faq.php',        'label' => 'FAQ',              'icon' => '❓'],
-];
+// Déterminer la page active
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
-<aside class="app-sidebar">
-    <a href="index.php" class="app-sidebar-logo">
-        <span class="logo-mark" style="width:32px;height:32px;">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="15" y="3" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="3" y="15" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="15" y="15" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <line x1="3" y1="12" x2="21" y2="12" stroke="#05070d" stroke-width="1.8"/>
-            </svg>
-        </span>
-        <span>DeepShield</span>
-    </a>
 
-    <nav class="app-nav">
-        <?php foreach ($navItems as $key => $item): ?>
-            <a href="<?= e($item['href']) ?>" class="app-nav-item <?= $navActive === $key ? 'active' : '' ?>">
-                <span class="app-nav-icon"><?= $item['icon'] ?></span>
-                <span><?= e($item['label']) ?></span>
-            </a>
-        <?php endforeach; ?>
+<!-- Menu vertical -->
+<div class="sidebar">
+    <nav class="nav-menu">
+        <div class="header-logo"><img src="../../public/assets/images/bouclier.png" alt="logo" style="width:30px; height:30px; object-fit:contain;">DeepShield</div>
+
+        <a href="../../public/dashboard.php" class="nav-item <?php echo (strpos($current_page, 'dashboard') !== false) ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/graphiques.png" alt="Dashboard" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="analyser.php" class="nav-item <?php echo ($current_page == 'analyser.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Analyser</span>
+        </a>
+
+        <a href="historique.php" class="nav-item <?php echo ($current_page == 'historique.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/fiche-devaluation.png" alt="Mon Historique" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Mon Historique</span>
+        </a>
+
+        <a href="resultats.php" class="nav-item <?php echo ($current_page == 'resultats.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/fluctuation.png" alt="Résultats Globaux" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Résultats Globaux</span>
+        </a>        
+        <!-- Menu réservé aux admins -->
+        <a href="gestion_users.php" class="nav-item <?php echo ($current_page == 'gestion_users.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/user_logo.png" alt="Gestion Utilisateurs" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Gestion Utilisateurs</span>
+        </a>
+    
+        <a href="faq.php" class="nav-item <?php echo ($current_page == 'faq.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/point-dinterrogation.png" alt="FAQ" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>FAQ</span>
+        </a>
+        <a href="backup.php" class="nav-item <?php echo ($current_page == 'backup.php') ? 'active' : ''; ?>">
+            <div class="nav-icon">
+                <img src="../../public/assets/images/database.png" alt="Backup" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Backup</span>
+        </a>
     </nav>
 
-    <div class="app-sidebar-footer">
-        <?php if ($currentUser): ?>
-            <div class="user-pill">
-                <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'], 0, 1) . substr($currentUser['last_name'], 0, 1))) ?></span>
-                <div class="user-pill-info">
-                    <span class="user-name"><?= e($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></span>
-                    <span class="user-email"><?= e($currentUser['email']) ?></span>
-                </div>
-            </div>
-            <a href="logout.php" class="app-nav-item app-nav-exit">
-                <span class="app-nav-icon">↩</span>
-                <span>Se déconnecter</span>
-            </a>
-        <?php else: ?>
-            <div class="demo-pill">
-                <span class="hero-badge-dot"></span>
-                Lecture seule — non connecté
-            </div>
-            <a href="login.php" class="app-nav-item app-nav-exit">
-                <span class="app-nav-icon">→</span>
-                <span>Se connecter</span>
-            </a>
-        <?php endif; ?>
-        <a href="index.php" class="app-nav-item app-nav-exit">
-            <span class="app-nav-icon">←</span>
-            <span>Retour à l'accueil</span>
-        </a>
-    </div>
-</aside>
+    <!-- Bouton Signaler - en bas de la sidebar -->
+    <div class="nav-divider"></div>
+    <a href="assistance.php" class="nav-item nav-assistance-btn" title="Signaler un problème ou demander de l'aide">
+        <div class="nav-icon">
+            <span class="assistance-icon">💬</span>
+        </div>
+        <span>Signaler</span>
+    </a>
+</div>

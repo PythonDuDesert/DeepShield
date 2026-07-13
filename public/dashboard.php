@@ -25,6 +25,7 @@ if ($dbError === null) {
 <title>Dashboard — DeepShield</title>
 <link href="assets/css/site.css" rel="stylesheet">
 <link href="assets/css/app.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/images/bouclier.ico" type="image/x-icon">
 </head>
 <body>
 
@@ -40,38 +41,38 @@ if ($dbError === null) {
     </div>
 
     <?php if ($dbError !== null): ?>
-      <div class="notice" style="margin-bottom:22px;">🛑 Base de données injoignable : <?= e($dbError) ?></div>
+      <div class="notice" style="margin-bottom:22px;"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"> Base de données injoignable : <?= e($dbError) ?></div>
     <?php elseif ($flash): ?>
       <div class="notice" style="margin-bottom:22px;"><?= e($flash['message']) ?></div>
     <?php endif; ?>
 
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-emoji">🗂️</div>
+        <div class="stat-logo"><img src="assets/images/fiche-devaluation.png" alt="fiche-devaluation.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['total'] ?></div>
           <div class="stat-caption">Analyses effectuées</div>
         </div>
       </div>
       <div class="stat-card stat-ok">
-        <div class="stat-emoji">✅</div>
+        <div class="stat-logo"><img src="assets/images/coche.png" alt="coche.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['reel'] ?></div>
           <div class="stat-caption">Vidéos jugées réelles</div>
         </div>
       </div>
       <div class="stat-card stat-warn">
-        <div class="stat-emoji">⚠️</div>
+        <div class="stat-logo"><img src="assets/images/avertissement.png" alt="avertissement.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['suspect'] ?></div>
           <div class="stat-caption">Verdicts suspects</div>
         </div>
       </div>
       <div class="stat-card stat-danger">
-        <div class="stat-emoji">🚨</div>
+        <div class="stat-logo"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['deepfake'] ?></div>
-          <div class="stat-caption">Deepfakes détectés</div>
+          <div class="stat-caption">Vidéos jugées Deepfakes</div>
         </div>
       </div>
     </div>
@@ -79,7 +80,7 @@ if ($dbError === null) {
     <div class="section-block">
       <div class="section-block-head">
         <h2>Lancer une analyse</h2>
-        <a href="analyser.php" class="btn-primary">🔍 Nouvelle analyse</a>
+        <a href="analyser.php" class="btn-primary">Nouvelle analyse</a>
       </div>
       <div class="panel">
         <p class="muted">
@@ -97,7 +98,6 @@ if ($dbError === null) {
       <div class="panel">
         <?php if (empty($recent)): ?>
           <div class="empty-state">
-            <div class="emoji">🕵️</div>
             <p>Aucune analyse pour le moment.</p>
             <a href="analyser.php" class="btn-primary" style="margin-top:14px;">Lancer votre première analyse</a>
           </div>
