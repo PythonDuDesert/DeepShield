@@ -73,7 +73,7 @@ $currentUser = ($auth !== null) ? $auth->currentUser() : null;
         </a>
         <a href="assistance.php" class="nav-item nav-assistance-btn" title="Signaler un problème ou demander de l'aide">
             <div class="nav-icon">
-                <span class="assistance-icon">💬</span>
+                <span class="assistance-icon"><img src="../../public/assets/images/speech-bubble.png" alt="Speech-bubble" style="width:25px; height:25px; object-fit:contain;"></span>
             </div>
             <span>Signaler</span>
         </a>
