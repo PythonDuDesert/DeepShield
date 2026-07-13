@@ -56,16 +56,11 @@ $flash = ds_flash_get();
               <label for="max_frames">Frames à analyser</label>
               <input type="number" id="max_frames" name="max_frames" min="5" max="120" value="<?= (int) $config['max_frames'] ?>">
             </div>
-            <div class="field">
-              <label for="threshold">Seuil de décision (% réel)</label>
-              <input type="number" id="threshold" name="threshold" min="1" max="99" value="<?= (float) $config['threshold'] ?>">
-            </div>
           </div>
 
           <label class="checkbox-row">
             <input type="checkbox" name="keep_for_retraining" value="1">
-            Je consens à la conservation de ce fichier pour ré-entraînement du modèle
-            (sinon, suppression automatique après analyse)
+            Je consens à la conservation de ce fichier (sinon, suppression automatique après analyse)
           </label>
 
           <p class="dash-error" id="client-error" hidden></p>

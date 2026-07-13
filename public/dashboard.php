@@ -119,7 +119,7 @@ if ($dbError === null) {
       </div>
     </div>
 
-    <p class="disclaimer">⚠ Rappel : le score DeepShield est une aide à la décision destinée à une équipe de conformité. Il ne remplace jamais un contrôle humain.</p>
+    <p class="disclaimer">Rappel : le score DeepShield est une aide à la décision destinée à une équipe de conformité. Il ne remplace jamais un contrôle humain.</p>
   </main>
 </div>
 
