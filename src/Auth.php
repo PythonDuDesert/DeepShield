@@ -27,7 +27,7 @@ final class Auth
             'email' => $_SESSION['email'] ?? '',
             'first_name' => $_SESSION['first_name'] ?? '',
             'last_name' => $_SESSION['last_name'] ?? '',
-            'role' => $_SESSION['role'] ?? 3,
+            'role' => $_SESSION['role'] ?? 2,
         ];
     }
 
