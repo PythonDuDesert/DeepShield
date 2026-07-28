@@ -5,7 +5,7 @@ $navActive = 'gestion_users';
 
 ds_require_admin($auth, $dbError);
 
-$roleLabels = [0 => 'Super admin', 1 => 'Admin', 2 => 'Utilisateur premium', 3 => 'Utilisateur'];
+$roleLabels = [0 => 'Admin', 1 => 'Utilisateur premium', 2 => 'Utilisateur'];
 
 if ($dbError === null) {
     $currentUser = $auth->currentUser();
@@ -29,13 +29,13 @@ if ($dbError === null) {
         } else {
             switch ($action) {
                 case 'update_role':
-                    $newRole = (int) ($_POST['role'] ?? 3);
-                    if ($newRole < 0 || $newRole > 3) {
+                    $newRole = (int) ($_POST['role'] ?? 2);
+                    if ($newRole < 0 || $newRole > 2) {
                         ds_flash_set('error', "Rôle invalide.");
                         break;
                     }
                     if ($newRole <= 1 && $currentRole !== 0) {
-                        ds_flash_set('error', "Seul un super admin peut promouvoir un compte administrateur.");
+                        ds_flash_set('error', "Seul un admin peut promouvoir un compte administrateur.");
                         break;
                     }
                     if ($targetId === $currentUserId && $newRole > $currentRole) {
