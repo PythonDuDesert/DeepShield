@@ -57,7 +57,7 @@ if ($dbError === null) {
     <section class="panel">
       <?php if (empty($all)): ?>
         <div class="empty-state">
-          <img src="../../public/assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
+          <img src="assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
           <p>Aucune analyse ne correspond à ce filtre.</p>
           <a href="analyser.php" class="btn-primary" style="margin-top:14px;">Lancer une analyse</a>
         </div>

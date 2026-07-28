@@ -87,4 +87,60 @@ final class VideoRepository
         }
         return 'INDÉTERMINÉ';
     }
+
+    /**
+     * Statistiques toutes organisations confondues (page "Résultats globaux").
+     * @return array{total:int, reel:int, suspect:int, deepfake:int, score_moyen:float, contributeurs:int}
+     */
+    public function statsGlobal(): array
+    {
+        $stats = ['total' => 0, 'reel' => 0, 'suspect' => 0, 'deepfake' => 0, 'score_moyen' => 0.0, 'contributeurs' => 0];
+
+        $stmt = $this->pdo->query('SELECT COUNT(*) AS total, AVG(score) AS avg_score, COUNT(DISTINCT user_id) AS users FROM videos');
+        $row = $stmt->fetch();
+        $stats['total'] = (int) ($row['total'] ?? 0);
+        $stats['score_moyen'] = $row['avg_score'] !== null ? round((float) $row['avg_score'], 1) : 0.0;
+        $stats['contributeurs'] = (int) ($row['users'] ?? 0);
+
+        foreach (['RÉEL' => 'reel', 'SUSPECT' => 'suspect', 'DEEPFAKE' => 'deepfake'] as $label => $key) {
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) AS n FROM videos WHERE explinations LIKE :verdict');
+            $stmt->execute(['verdict' => $label . '%']);
+            $stats[$key] = (int) $stmt->fetch()['n'];
+        }
+
+        return $stats;
+    }
+
+    /** @return array<int, array<string, mixed>> Analyses de tous les comptes, avec identité de l'auteur. */
+    public function listAllWithUser(int $limit = 100, string $verdictFilter = ''): array
+    {
+        $sql = 'SELECT v.*, u.first_name AS u_first_name, u.last_name AS u_last_name, u.email AS u_email
+                FROM videos v
+                INNER JOIN users u ON u.id = v.user_id';
+        $params = [];
+        if ($verdictFilter !== '') {
+            $sql .= ' WHERE v.explinations LIKE :verdict';
+            $params['verdict'] = $verdictFilter . '%';
+        }
+        $sql .= ' ORDER BY v.uploaded_at DESC LIMIT ' . max(1, min(500, $limit));
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /** @return array<int, array<string, mixed>> Classement des comptes par nombre d'analyses. */
+    public function topContributors(int $limit = 5): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT u.id, u.first_name, u.last_name, u.email, COUNT(v.id) AS total, AVG(v.score) AS avg_score
+             FROM videos v
+             INNER JOIN users u ON u.id = v.user_id
+             GROUP BY u.id, u.first_name, u.last_name, u.email
+             ORDER BY total DESC
+             LIMIT ' . max(1, min(50, $limit))
+        );
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

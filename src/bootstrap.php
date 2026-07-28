@@ -48,3 +48,24 @@ function ds_client_ip(): string
 {
     return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }
+
+/** Rôles autorisés à accéder aux pages d'administration (0=super admin, 1=admin). */
+function ds_is_admin(?array $user): bool
+{
+    return $user !== null && (int) ($user['role'] ?? 3) <= 1;
+}
+
+/** Redirige vers le dashboard si l'utilisateur connecté n'est pas admin/super admin. */
+function ds_require_admin(?Auth $auth, ?string $dbError): void
+{
+    ds_require_login($auth, $dbError);
+    if ($dbError !== null) {
+        return; // on laisse la page afficher l'erreur DB plutôt que de rediriger dans le vide
+    }
+    if (!ds_is_admin($auth->currentUser())) {
+        ds_flash_set('error', "Cette page est réservée aux administrateurs.");
+        header('Location: dashboard.php');
+        exit;
+    }
+}
+ 
