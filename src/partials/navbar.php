@@ -6,15 +6,7 @@ $navActive = $navActive ?? '';
 ?>
 <nav class="navbar" id="navbar">
     <a href="index.php" class="logo">
-        <span class="logo-mark">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="15" y="3" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="3" y="15" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <rect x="15" y="15" width="6" height="6" rx="1.2" stroke="#05070d" stroke-width="1.8"/>
-                <line x1="3" y1="12" x2="21" y2="12" stroke="#05070d" stroke-width="1.8"/>
-            </svg>
-        </span>
+        <img src="assets/images/bouclier.png" alt="logo" style="width:26px;height:26px;">
         <span>DeepShield</span>
     </a>
     <div class="nav-links">
