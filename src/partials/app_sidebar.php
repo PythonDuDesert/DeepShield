@@ -3,6 +3,8 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 
 $currentUser = ($auth !== null) ? $auth->currentUser() : null;
+
+$role = $_SESSION['role'];
 ?>
 
 <!-- Menu vertical -->
@@ -31,19 +33,25 @@ $currentUser = ($auth !== null) ? $auth->currentUser() : null;
             <span>Mon Historique</span>
         </a>
 
-        <a href="resultats.php" class="nav-item <?php echo ($current_page == 'resultats.php') ? 'active' : ''; ?>">
-            <div class="nav-icon">
-                <img src="assets/images/fluctuation.png" alt="Résultats Globaux" style="width:25px; height:25px; object-fit:contain;">
-            </div>
-            <span>Résultats Globaux</span>
-        </a>        
         <!-- Menu réservé aux admins -->
-        <a href="gestion_users.php" class="nav-item <?php echo ($current_page == 'gestion_users.php') ? 'active' : ''; ?>">
-            <div class="nav-icon">
-                <img src="assets/images/user_logo.png" alt="Gestion Utilisateurs" style="width:25px; height:25px; object-fit:contain;">
-            </div>
-            <span>Gestion Utilisateurs</span>
-        </a>
+        <?php if ($role === 0): ?>
+            <a href="resultats.php" class="nav-item <?php echo ($current_page == 'resultats.php') ? 'active' : ''; ?>">
+                <div class="nav-icon">
+                    <img src="assets/images/fluctuation.png" alt="Résultats Globaux" style="width:25px; height:25px; object-fit:contain;">
+                </div>
+                <span>Résultats Globaux</span>
+            </a>   
+        <?php endif; ?> 
+
+        <!-- Menu réservé aux admins -->
+        <?php if ($role === 0): ?>
+            <a href="gestion_users.php" class="nav-item <?php echo ($current_page == 'gestion_users.php') ? 'active' : ''; ?>">
+                <div class="nav-icon">
+                    <img src="assets/images/user_logo.png" alt="Gestion Utilisateurs" style="width:25px; height:25px; object-fit:contain;">
+                </div>
+                <span>Gestion Utilisateurs</span>
+            </a>
+        <?php endif; ?> 
     
         <a href="faq.php" class="nav-item <?php echo ($current_page == 'faq.php') ? 'active' : ''; ?>">
             <div class="nav-icon">
@@ -51,12 +59,16 @@ $currentUser = ($auth !== null) ? $auth->currentUser() : null;
             </div>
             <span>FAQ</span>
         </a>
-        <a href="backup.php" class="nav-item <?php echo ($current_page == 'backup.php') ? 'active' : ''; ?>">
-            <div class="nav-icon">
-                <img src="assets/images/database.png" alt="Backup" style="width:25px; height:25px; object-fit:contain;">
-            </div>
-            <span>Backup</span>
-        </a>
+
+        <!-- Menu réservé aux admins -->
+        <?php if ($role === 0): ?>
+            <a href="backup.php" class="nav-item <?php echo ($current_page == 'backup.php') ? 'active' : ''; ?>">
+                <div class="nav-icon">
+                    <img src="assets/images/database.png" alt="Backup" style="width:25px; height:25px; object-fit:contain;">
+                </div>
+                <span>Backup</span>
+            </a>
+        <?php endif; ?>
     </nav>
 
     <div class="app-sidebar-footer">
