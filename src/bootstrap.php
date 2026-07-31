@@ -49,13 +49,13 @@ function ds_client_ip(): string
     return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }
 
-/** Rôles autorisés à accéder aux pages d'administration (0=super admin, 1=admin). */
+/** Rôles autorisés à accéder aux pages d'administration (0=admin). */
 function ds_is_admin(?array $user): bool
 {
     return $user !== null && (int) ($user['role'] ?? 3) <= 1;
 }
 
-/** Redirige vers le dashboard si l'utilisateur connecté n'est pas admin/super admin. */
+/** Redirige vers le dashboard si l'utilisateur connecté n'est pas admin. */
 function ds_require_admin(?Auth $auth, ?string $dbError): void
 {
     ds_require_login($auth, $dbError);
