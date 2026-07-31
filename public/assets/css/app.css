@@ -250,7 +250,6 @@
     right: 0;
     left: 0;
     height: 80px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     padding: 0 40px;
@@ -286,7 +285,7 @@
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 .empty-state .logo { font-size: 2em; margin-bottom: 10px; }
 
-/* ────── Dashboard (démo) ────── */
+/* ────── Dashboard ────── */
 .dash-shell { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 110px 20px 60px; }
 .dash-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; flex-wrap: wrap; gap: 12px; }
 .dash-head h1 { font-family: var(--font-display); font-size: 1.7em; }

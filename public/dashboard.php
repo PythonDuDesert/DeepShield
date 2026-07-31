@@ -1,10 +1,12 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/logs/logs.php';
 $navActive = 'dashboard';
 
 ds_require_login($auth, $dbError);
 
+$role = $_SESSION['role'];
 $flash = ds_flash_get();
 $stats = ['total' => 0, 'reel' => 0, 'suspect' => 0, 'deepfake' => 0, 'score_moyen' => 0.0];
 $recent = [];
@@ -16,7 +18,24 @@ if ($dbError === null) {
     $stats = $videos->statsByUser((int) $user['id']);
     $recent = $videos->listByUser((int) $user['id'], 6);
 }
+
+// Terminal
+// Par défaut : jour courant.
+$today = date('d-m-Y');
+$requested_day = '';
+if (!empty($_GET['log_day'])) {
+    $candidate = trim($_GET['log_day']);
+    if (preg_match('/^\d{2}-\d{2}-\d{4}$/', $candidate)) {
+        $requested_day = $candidate;
+    }
+}
+$log_day = $requested_day ?: $today;
+$log_filename = 'logs-' . $log_day . '.json';
+ 
+// Lecture via la fonction dédiée de logs.php
+$logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log_day, 50) : [];
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,6 +139,9 @@ if ($dbError === null) {
     </div>
 
     <p class="disclaimer">Rappel : le score DeepShield est une aide à la décision. Il ne remplace jamais un contrôle humain.</p>
+
+    <br><br>
+    <?php include 'logs.php'; ?>
   </main>
 </div>
 
