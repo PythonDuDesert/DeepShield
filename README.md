@@ -1,9 +1,9 @@
 # DeepShield
 DeepShield - Détection de deepfakes audio/vidéo pour KYC
 
-Lucas DUHOO
-Omar TANARADJE
-Olivier YAMMINE
+Lucas DUHOO<br>
+Omar TANARADJE<br>
+Olivier YAMMINE<br>
 
 
 <br><br>
