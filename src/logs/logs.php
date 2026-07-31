@@ -1,6 +1,6 @@
 <?php
 
-//TODO require_once __DIR__ . '\integrity_check.php';
+require_once 'integrity_check.php';
 
 // Configuration - le fichier logs.json est dans le même dossier que logs.php
 define('LOG_DIR', __DIR__);
@@ -430,37 +430,6 @@ function log_user_role_changed($user_id, $email, $old_role, $new_role) {
 }
 
 /**
- * Log de requête de changement de rôle rejectée
- * 
- * @param int $admin_id ID de l'admin
- * @param string $admin_email Email de l'admin
- * @param int $user_id ID de l'utilisateur
- * @param string $email Email de l'utilisateur
- * @param int $old_role Ancien rôle
- * @param int $new_role Nouveau rôle
- */
-function log_user_request_rejected($admin_id, $admin_email, $user_id, $email, $old_role, $new_role) {
-    $old_role_name = get_role_name($old_role);
-    $new_role_name = get_role_name($new_role);
-
-    return write_log(
-        'important_info',
-        'user_request_rejected',
-        "$admin_email a rejeté la requête de rôle de $email pour '$old_role_name' à '$new_role_name'",
-        $admin_id,
-        $admin_email,
-        [
-            'affected_user_id' => $user_id,
-            'affected_user_email' => $email,
-            'old_role' => $old_role,
-            'new_role' => $new_role,
-            'old_role_name' => $old_role_name,
-            'new_role_name' => $new_role_name
-        ]
-    );
-}
-
-/**
  * Log de blocage temporaire d'une IP (trop de tentatives)
  *
  * @param string $email Email utilisé lors du blocage
@@ -511,24 +480,24 @@ function log_user_auto_unblocked($user_id, $email) {
 }
 
 /**
- * Log d'analyse d'un email
+ * Log d'analyse d'une vidéo
  * 
  * @param int $user_id ID de l'utilisateur
  * @param string $email Email de l'utilisateur
  * @param int $email_id ID de l'email
  * @param string $score Score de phishing de l'email
  */
-function log_email_analysed($user_id, $email, $email_id, $score) {
+function log_video_analysed($user_id, $email, $email_id, $score) {
 
     return write_log(
         'info',
-        'email_analysed',
-        "$email a analysé un email (id: $email_id)(score: $score%)",
+        'video_analysed',
+        "$email a analysé une video (id: $email_id)(score: $score%)",
         [
             'affected_user_id' => $user_id,
             'affected_user_email' => $email,
-            'affected_email_id' => $email_id,
-            'affected_email_score' => $score,
+            'affected_video_id' => $email_id,
+            'affected_video_score' => $score,
         ]
     );
 }
