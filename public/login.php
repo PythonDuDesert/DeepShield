@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/logs/logs.php';
 $navActive = 'login';
 
 // Si déjà connecté, direction le dashboard.
@@ -23,21 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
         $password = (string) ($_POST['password'] ?? '');
         $result = $auth->login($email, $password, ds_client_ip());
         if ($result['success']) {
+            $user = $auth->currentUser(); // session déjà remplie par login()
+            log_login($user['id'], $email, $user['role']);
             header('Location: dashboard.php');
             exit;
         }
+
+        log_login_failed($email);
         $loginError = $result['error'];
     }
 
     if ($action === 'register') {
         $initialTab = 'register';
-        $result = $auth->register(
-            trim($_POST['email'] ?? ''),
-            (string) ($_POST['password'] ?? ''),
-            trim($_POST['first_name'] ?? ''),
-            trim($_POST['last_name'] ?? '')
-        );
+        $first_name = trim($_POST['first_name'] ?? '');
+        $last_name = trim($_POST['last_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $result = $auth->register($email, (string) ($_POST['password'] ?? ''), $first_name, $last_name);
         if ($result['success']) {
+            log_profile_created($result['user_id'], $email, $first_name, $last_name);
             $registerSuccess = true;
             $initialTab = 'login';
         } else {
@@ -45,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
         }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">

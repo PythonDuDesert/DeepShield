@@ -75,7 +75,7 @@ final class Auth
             'last_name' => $lastName,
         ]);
 
-        return ['success' => true, 'error' => null];
+        return ['success' => true, 'error' => null, 'user_id' => (int) $this->pdo->lastInsertId()];
     }
 
     /**
