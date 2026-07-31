@@ -141,7 +141,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
     <p class="disclaimer">Rappel : le score DeepShield est une aide à la décision. Il ne remplace jamais un contrôle humain.</p>
 
     <br><br>
-    <?php include 'logs.php'; ?>
+    <?php include 'logs_terminal.php'; ?>
   </main>
 </div>
 

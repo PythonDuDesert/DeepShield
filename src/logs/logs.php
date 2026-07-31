@@ -405,54 +405,19 @@ function log_user_unblocked($admin_id, $admin_email, $user_id, $email) {
 /**
  * Log de changement de rôle
  * 
- * @param int $admin_id ID de l'admin
- * @param string $admin_email Email de l'admin
  * @param int $user_id ID de l'utilisateur
  * @param string $email Email de l'utilisateur
  * @param int $old_role Ancien rôle
  * @param int $new_role Nouveau rôle
  */
-function log_user_role_changed($admin_id, $admin_email, $user_id, $email, $old_role, $new_role) {
+function log_user_role_changed($user_id, $email, $old_role, $new_role) {
     $old_role_name = get_role_name($old_role);
     $new_role_name = get_role_name($new_role);
     
     return write_log(
         'important_info',
         'role_changed',
-        "$admin_email a changé le rôle de $email de '$old_role_name' à '$new_role_name'",
-        $admin_id,
-        $admin_email,
-        [
-            'affected_user_id' => $user_id,
-            'affected_user_email' => $email,
-            'old_role' => $old_role,
-            'new_role' => $new_role,
-            'old_role_name' => $old_role_name,
-            'new_role_name' => $new_role_name
-        ]
-    );
-}
-
-/**
- * Log de requête de changement de rôle approuvée
- * 
- * @param int $admin_id ID de l'admin
- * @param string $admin_email Email de l'admin
- * @param int $user_id ID de l'utilisateur
- * @param string $email Email de l'utilisateur
- * @param int $old_role Ancien rôle
- * @param int $new_role Nouveau rôle
- */
-function log_user_request_approved($admin_id, $admin_email, $user_id, $email, $old_role, $new_role) {
-    $old_role_name = get_role_name($old_role);
-    $new_role_name = get_role_name($new_role);
-
-    return write_log(
-        'important_info',
-        'user_request_approved',
-        "$admin_email a approuvé la requête de rôle de $email de '$old_role_name' à '$new_role_name'",
-        $admin_id,
-        $admin_email,
+        "$email a changé de rôle de '$old_role_name' à '$new_role_name'",
         [
             'affected_user_id' => $user_id,
             'affected_user_email' => $email,
@@ -678,11 +643,9 @@ function get_role_name($role) {
     }
     
     $roles = [
-        0 => 'super admin',
-        1 => 'admin',
-        2 => 'super user',
-        3 => 'user',
-        4 => 'statisticien'
+        0 => 'admin',
+        1 => 'premium user',
+        2 => 'user',
     ];
     
     return $roles[$role] ?? "rôle $role";
