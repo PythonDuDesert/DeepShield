@@ -28,7 +28,7 @@ $role = $_SESSION['role'];
 
         <a href="historique.php" class="nav-item <?php echo ($current_page == 'historique.php') ? 'active' : ''; ?>">
             <div class="nav-icon">
-                <img src="assets/images/fiche-devaluation.png" alt="Mon Historique" style="width:25px; height:25px; object-fit:contain;">
+                <img src="assets/images/file.png" alt="Mon Historique" style="width:25px; height:25px; object-fit:contain;">
             </div>
             <span>Mon Historique</span>
         </a>
