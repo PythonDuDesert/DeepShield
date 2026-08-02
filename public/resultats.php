@@ -101,31 +101,6 @@ function ds_pct(int $part, int $total): float
             </div>
           </div>
         <?php endforeach; ?>
-        <p class="disclaimer">Rappel : ces chiffres agrègent les analyses de tous les comptes. Ils servent d'indicateur de tendance, pas de preuve individuelle.</p>
-      </div>
-    </div>
-
-    <div class="section-block">
-      <div class="section-block-head">
-        <h2>Comptes les plus actifs</h2>
-      </div>
-      <div class="panel">
-        <?php if (empty($top)): ?>
-          <div class="empty-state"><p>Aucune analyse enregistrée pour le moment.</p></div>
-        <?php else: ?>
-          <table class="table">
-            <thead><tr><th>Compte</th><th>Analyses</th><th>Score « réel » moyen</th></tr></thead>
-            <tbody>
-              <?php foreach ($top as $c): ?>
-                <tr>
-                  <td><?= e($c['first_name'] . ' ' . $c['last_name']) ?> <span class="muted">(<?= e($c['email']) ?>)</span></td>
-                  <td><?= (int) $c['total'] ?></td>
-                  <td><?= $c['avg_score'] !== null ? number_format((float) $c['avg_score'], 1) . '%' : '—' ?></td>
-                </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
-        <?php endif; ?>
       </div>
     </div>
 
