@@ -160,7 +160,7 @@ if ($dbError === null) {
                     <select name="role" onchange="this.form.submit()"
                       style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);color:var(--text-main);border-radius:8px;padding:5px 8px;font-size:0.85em;">
                       <?php foreach ($roleLabels as $val => $label): ?>
-                        <option value="<?= $val ?>" <?= (int) $u['role'] === $val ? 'selected' : '' ?>><?= e($label) ?></option>
+                        <option value="<?= $val ?>" style="background:#0b0f1a;color:#f5f5f5;" <?= (int) $u['role'] === $val ? 'selected' : '' ?>><?= e($label) ?></option>
                       <?php endforeach; ?>
                     </select>
                   </form>
