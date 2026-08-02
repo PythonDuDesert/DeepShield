@@ -3,7 +3,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'resultats';
 
-ds_require_login($auth, $dbError);
+ds_require_admin($auth, $dbError);
 
 $flash = ds_flash_get();
 $filter = $_GET['verdict'] ?? '';

@@ -418,6 +418,8 @@ function log_user_role_changed($user_id, $email, $old_role, $new_role) {
         'important_info',
         'role_changed',
         "$email a changé de rôle de '$old_role_name' à '$new_role_name'",
+        $user_id,
+        $email,
         [
             'affected_user_id' => $user_id,
             'affected_user_email' => $email,

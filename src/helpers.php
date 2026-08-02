@@ -68,3 +68,18 @@ function ds_flash_set(string $type, string $message): void
 {
     $_SESSION['ds_flash'] = ['type' => $type, 'message' => $message];
 }
+
+/** Génère (une fois par session) et retourne le jeton CSRF courant. */
+function ds_csrf_token(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/** Vérifie qu'un jeton soumis correspond au jeton CSRF de la session. */
+function ds_csrf_verify(?string $token): bool
+{
+    return !empty($_SESSION['csrf_token']) && is_string($token) && hash_equals($_SESSION['csrf_token'], $token);
+}

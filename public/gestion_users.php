@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/logs/logs.php';
 $navActive = 'gestion_users';
 
 ds_require_admin($auth, $dbError);
@@ -16,6 +17,12 @@ if ($dbError === null) {
         $action = $_POST['action'] ?? '';
         $targetId = (int) ($_POST['user_id'] ?? 0);
 
+        if (!ds_csrf_verify($_POST['csrf_token'] ?? null)) {
+            ds_flash_set('error', "Requête invalide ou expirée, merci de réessayer.");
+            header('Location: gestion_users.php');
+            exit;
+        }
+
         $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->execute(['id' => $targetId]);
         $target = $stmt->fetch();
@@ -24,8 +31,6 @@ if ($dbError === null) {
             ds_flash_set('error', "Utilisateur introuvable.");
         } elseif ($targetId === $currentUserId && in_array($action, ['deactivate', 'delete_user'], true)) {
             ds_flash_set('error', "Vous ne pouvez pas désactiver ou supprimer votre propre compte.");
-        } elseif ((int) $target['role'] <= 1 && $currentRole !== 0 && $action !== 'unlock') {
-            ds_flash_set('error', "Seul un super admin peut modifier un compte admin.");
         } else {
             switch ($action) {
                 case 'update_role':
@@ -34,34 +39,34 @@ if ($dbError === null) {
                         ds_flash_set('error', "Rôle invalide.");
                         break;
                     }
-                    if ($newRole <= 1 && $currentRole !== 0) {
-                        ds_flash_set('error', "Seul un admin peut promouvoir un compte administrateur.");
-                        break;
-                    }
                     if ($targetId === $currentUserId && $newRole > $currentRole) {
                         ds_flash_set('error', "Vous ne pouvez pas vous rétrograder vous-même.");
                         break;
                     }
                     $stmt = $pdo->prepare('UPDATE users SET role = :role WHERE id = :id');
                     $stmt->execute(['role' => $newRole, 'id' => $targetId]);
+                    log_user_role_changed($targetId, $target['email'], (int) $target['role'], $newRole);
                     ds_flash_set('success', "Rôle mis à jour pour " . $target['first_name'] . ' ' . $target['last_name'] . '.');
                     break;
 
                 case 'unlock':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 1, failed_login_attempts = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
+                    log_user_unblocked($currentUserId, $currentUser['email'], $targetId, $target['email']);
                     ds_flash_set('success', "Compte débloqué.");
                     break;
 
                 case 'deactivate':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
+                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], false);
                     ds_flash_set('success', "Compte désactivé.");
                     break;
 
                 case 'activate':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 1, failed_login_attempts = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
+                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], true);
                     ds_flash_set('success', "Compte réactivé.");
                     break;
 
@@ -80,6 +85,7 @@ if ($dbError === null) {
                     ]);
                     $del = $pdo->prepare('DELETE FROM users WHERE id = :id');
                     $del->execute(['id' => $targetId]);
+                    log_user_deleted($currentUserId, $currentUser['email'], $targetId, $target['email'], $target['first_name'], $target['last_name']);
                     ds_flash_set('success', "Compte supprimé (archivé dans le journal de suppression).");
                     break;
 
@@ -94,6 +100,7 @@ if ($dbError === null) {
 }
 
 $flash = ds_flash_get();
+$csrfToken = ds_csrf_token();
 $users = [];
 if ($dbError === null) {
     $stmt = $pdo->query('SELECT id, email, first_name, last_name, role, is_active, failed_login_attempts, created_at, last_login FROM users ORDER BY created_at DESC');
@@ -149,7 +156,8 @@ if ($dbError === null) {
                   <form method="post" style="display:flex;gap:6px;align-items:center;">
                     <input type="hidden" name="action" value="update_role">
                     <input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>">
-                    <select name="role" onchange="this.form.submit()" <?= ((int) $u['role'] <= 1 && $currentRole !== 0) ? 'disabled' : '' ?>
+                    <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                    <select name="role" onchange="this.form.submit()"
                       style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);color:var(--text-main);border-radius:8px;padding:5px 8px;font-size:0.85em;">
                       <?php foreach ($roleLabels as $val => $label): ?>
                         <option value="<?= $val ?>" <?= (int) $u['role'] === $val ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -171,13 +179,13 @@ if ($dbError === null) {
                 <td>
                   <div style="display:flex;gap:6px;flex-wrap:wrap;">
                     <?php if ((int) $u['is_active'] === 2): ?>
-                      <form method="post"><input type="hidden" name="action" value="unlock"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><button type="submit" class="btn-ghost">Débloquer</button></form>
+                      <form method="post"><input type="hidden" name="action" value="unlock"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>"><button type="submit" class="btn-ghost">Débloquer</button></form>
                     <?php elseif ((int) $u['is_active'] === 0): ?>
-                      <form method="post"><input type="hidden" name="action" value="activate"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><button type="submit" class="btn-ghost">Réactiver</button></form>
+                      <form method="post"><input type="hidden" name="action" value="activate"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>"><button type="submit" class="btn-ghost">Réactiver</button></form>
                     <?php else: ?>
-                      <form method="post" onsubmit="return !<?= $isSelf ? 'true' : 'false' ?>;"><input type="hidden" name="action" value="deactivate"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><button type="submit" class="btn-ghost" <?= $isSelf ? 'disabled title="Vous ne pouvez pas désactiver votre propre compte"' : '' ?>>Désactiver</button></form>
+                      <form method="post" onsubmit="return !<?= $isSelf ? 'true' : 'false' ?>;"><input type="hidden" name="action" value="deactivate"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>"><button type="submit" class="btn-ghost" <?= $isSelf ? 'disabled title="Vous ne pouvez pas désactiver votre propre compte"' : '' ?>>Désactiver</button></form>
                     <?php endif; ?>
-                    <form method="post" onsubmit="return confirm('Supprimer définitivement ce compte ?');"><input type="hidden" name="action" value="delete_user"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><button type="submit" class="btn-ghost" style="color:var(--danger);" <?= $isSelf ? 'disabled title="Vous ne pouvez pas supprimer votre propre compte"' : '' ?>>Supprimer</button></form>
+                    <form method="post" onsubmit="return confirm('Supprimer définitivement ce compte ?');"><input type="hidden" name="action" value="delete_user"><input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>"><input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>"><button type="submit" class="btn-ghost" style="color:var(--danger);" <?= $isSelf ? 'disabled title="Vous ne pouvez pas supprimer votre propre compte"' : '' ?>>Supprimer</button></form>
                   </div>
                 </td>
               </tr>
@@ -187,7 +195,7 @@ if ($dbError === null) {
       <?php endif; ?>
     </section>
 
-    <p class="disclaimer">Seul un super admin peut modifier ou supprimer un compte admin. Chaque suppression est archivée dans le journal de suppression (<code>account_deletion_logs</code>).</p>
+    <p class="disclaimer">Cette page est réservée aux administrateurs. Chaque suppression est archivée dans le journal de suppression (<code>account_deletion_logs</code>).</p>
 
     <?php endif; ?>
   </main>

@@ -62,7 +62,7 @@ function ds_client_ip(): string
 /** Rôles autorisés à accéder aux pages d'administration (0=admin). */
 function ds_is_admin(?array $user): bool
 {
-    return $user !== null && (int) ($user['role'] ?? 3) <= 1;
+    return $user !== null && (int) ($user['role'] ?? 3) === 0;
 }
 
 /** Redirige vers le dashboard si l'utilisateur connecté n'est pas admin. */
