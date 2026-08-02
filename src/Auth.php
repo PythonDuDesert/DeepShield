@@ -12,6 +12,8 @@ declare(strict_types=1);
 final class Auth
 {
     private const MAX_FAILED_ATTEMPTS = 5;
+    private const IP_MAX_ATTEMPTS = 10;
+    private const IP_WINDOW_MINUTES = 15;
 
     public function __construct(private PDO $pdo)
     {
@@ -49,8 +51,9 @@ final class Auth
         if (strlen($email) > 50) {
             return ['success' => false, 'error' => "Adresse e-mail trop longue (50 caractères maximum)."];
         }
-        if (strlen($password) < 8) {
-            return ['success' => false, 'error' => "Le mot de passe doit contenir au moins 8 caractères."];
+        $passwordError = $this->passwordError($password);
+        if ($passwordError !== null) {
+            return ['success' => false, 'error' => $passwordError];
         }
         if ($firstName === '' || $lastName === '') {
             return ['success' => false, 'error' => "Merci d'indiquer votre nom et votre prénom."];
@@ -84,6 +87,10 @@ final class Auth
     public function login(string $email, string $password, string $ipAddress): array
     {
         $email = trim(strtolower($email));
+
+        if ($this->isIpRateLimited($ipAddress)) {
+            return ['success' => false, 'error' => "Trop de tentatives de connexion depuis cette adresse. Réessayez dans quelques minutes."];
+        }
 
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
         $stmt->execute(['email' => $email]);
@@ -129,6 +136,28 @@ final class Auth
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
+    }
+
+    private function passwordError(string $password): ?string
+    {
+        if (strlen($password) < 8 || strlen($password) > 72) {
+            return "Le mot de passe doit contenir entre 8 et 72 caractères.";
+        }
+        if (!preg_match('/[a-z]/', $password) || !preg_match('/[A-Z]/', $password)
+            || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            return "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.";
+        }
+        return null;
+    }
+
+    private function isIpRateLimited(string $ipAddress): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM login_attempts
+             WHERE ip_address = :ip AND attempt_time > (NOW() - INTERVAL ' . self::IP_WINDOW_MINUTES . ' MINUTE)'
+        );
+        $stmt->execute(['ip' => $ipAddress]);
+        return (int) $stmt->fetchColumn() >= self::IP_MAX_ATTEMPTS;
     }
 
     private function logAttempt(string $ipAddress, ?string $email): void

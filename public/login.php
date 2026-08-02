@@ -13,6 +13,7 @@ if ($dbError === null && $auth !== null && $auth->isLoggedIn()) {
 $loginError = null;
 $registerError = null;
 $registerSuccess = false;
+$sessionExpired = ($_GET['expired'] ?? '') === '1';
 $initialTab = ($_GET['tab'] ?? '') === 'register' ? 'register' : 'login';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
@@ -89,6 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
       </div>
     <?php else: ?>
 
+      <?php if ($sessionExpired): ?>
+        <div class="auth-notice" style="margin-top:0;">
+          <span class="icon">⏱️</span>
+          <span>Session expirée pour inactivité. Merci de vous reconnecter.</span>
+        </div>
+      <?php endif; ?>
+
       <?php if ($registerSuccess): ?>
         <div class="auth-notice" style="border-color:var(--ok);background:rgba(52,211,153,0.08);color:var(--ok);margin-top:0;">
           <span class="icon">✅</span>
@@ -133,8 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
               <input type="email" id="reg-email" name="email" placeholder="prenom.nom@organisme.fr" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
           </div>
           <div class="auth-field">
-              <label for="reg-password">Mot de passe (8 caractères minimum)</label>
-              <input type="password" id="reg-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+              <label for="reg-password">Mot de passe (8-72 caractères, avec majuscule, minuscule, chiffre et caractère spécial)</label>
+              <input type="password" id="reg-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" maxlength="72"
+                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,72}"
+                title="8 à 72 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial." required>
           </div>
           <button type="submit" class="auth-submit">Créer mon compte</button>
       </form>

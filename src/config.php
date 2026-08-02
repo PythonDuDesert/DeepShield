@@ -60,6 +60,7 @@ return [
     'video_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_VIDEO_EXT', 'mp4,mov'))),
     'audio_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_AUDIO_EXT', 'wav,mp3'))),
     'auto_delete_uploads' => ds_env('DEEPSHIELD_AUTO_DELETE_UPLOADS', '1') === '1',
+    'session_idle_timeout' => (int) ds_env('SESSION_IDLE_TIMEOUT', 900),
     'db_host' => ds_env('DB_HOST', '127.0.0.1'),
     'db_port' => (int) ds_env('DB_PORT', 3306),
     'db_name' => ds_env('DB_NAME', 'deepshield'),

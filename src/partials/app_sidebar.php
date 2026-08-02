@@ -91,3 +91,6 @@ $role = $_SESSION['role'];
         </a>
     </div>
 </div>
+
+<script>window.DS_IDLE_TIMEOUT_SECONDS = <?= (int) ($config['session_idle_timeout'] ?? 900) ?>;</script>
+<script src="assets/js/idle-timeout.js"></script>

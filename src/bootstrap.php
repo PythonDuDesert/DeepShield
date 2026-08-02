@@ -42,6 +42,16 @@ function ds_require_login(?Auth $auth, ?string $dbError): void
         header('Location: login.php');
         exit;
     }
+
+    global $config;
+    $idleTimeout = (int) ($config['session_idle_timeout'] ?? 900);
+    if (!empty($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $idleTimeout) {
+        $_SESSION = [];
+        session_destroy();
+        header('Location: login.php?expired=1');
+        exit;
+    }
+    $_SESSION['last_activity'] = time();
 }
 
 function ds_client_ip(): string
