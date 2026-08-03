@@ -69,7 +69,7 @@ final class Auth
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO users (email, password_hash, first_name, last_name, role, is_active, created_at, updated_at)
-             VALUES (:email, :hash, :first_name, :last_name, 3, 1, NOW(), NOW())'
+             VALUES (:email, :hash, :first_name, :last_name, 2, 1, NOW(), NOW())'
         );
         $stmt->execute([
             'email' => $email,
