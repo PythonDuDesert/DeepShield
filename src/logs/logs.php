@@ -405,21 +405,23 @@ function log_user_unblocked($admin_id, $admin_email, $user_id, $email) {
 /**
  * Log de changement de rôle
  * 
+ * @param int $admin_id ID de l'admin
+ * @param string $admin_email Email de l'admin
  * @param int $user_id ID de l'utilisateur
  * @param string $email Email de l'utilisateur
  * @param int $old_role Ancien rôle
  * @param int $new_role Nouveau rôle
  */
-function log_user_role_changed($user_id, $email, $old_role, $new_role) {
+function log_user_role_changed($admin_id, $admin_email, $user_id, $email, $old_role, $new_role) {
     $old_role_name = get_role_name($old_role);
     $new_role_name = get_role_name($new_role);
     
     return write_log(
         'important_info',
         'role_changed',
-        "$email a changé de rôle de '$old_role_name' à '$new_role_name'",
-        $user_id,
-        $email,
+        "$admin_email a changé le rôle de $email de '$old_role_name' à '$new_role_name'",
+        $admin_id,
+        $admin_email,
         [
             'affected_user_id' => $user_id,
             'affected_user_email' => $email,

@@ -547,6 +547,199 @@ section { position: relative; z-index: 1; padding: 110px 24px; max-width: 1100px
     display: block;
 }
 
+/* ===================================
+   BACKUPS
+   =================================== */
+.btn-details {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-details:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+    background: linear-gradient(135deg, #1a60b2, #4b38be);
+    text-decoration: none;
+}
+
+.btn-primary {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(74, 144, 226, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(74, 144, 226, 0.6);
+}
+
+.btn-close {
+    background: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.4);
+}
+
+.btn-close:hover {
+    background: rgba(108, 117, 125, 0.3);
+    border-color: #6c757d;
+    transform: translateY(-1px);
+}
+
+.backup-btn-download {
+    padding: 8px 16px;
+    font-size: 1em;
+    background: #00b894;
+}
+
+.backup-btn-download:hover {
+    box-shadow: 0 2px 15px rgba(15, 255, 251, 0.3);
+    background: #009a7b;
+}
+
+.backup-btn-import {
+    padding: 8px 16px;
+    box-shadow: 0 5px 20px rgba(74, 144, 226, 0.1);
+    font-size: 1em;
+}
+
+.backup-btn-import:hover {
+    background: linear-gradient(135deg, hsl(212, 62%, 42%), hsl(249, 70%, 52%));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(74, 144, 226, 0.3);
+}
+
+.backup-btn-delete {
+    background: #d63031;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.backup-btn-delete:hover {
+    background: #841a1a;
+    box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+    transform: translateY(-2px);
+}
+
+/* ===================================
+   TABLES
+   =================================== */
+.data-table {
+    background: var(--bg-card);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(74, 144, 226, 0.2);
+}
+
+.table-header {
+    padding: 20px 30px;
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(123, 104, 238, 0.2));
+    border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+}
+
+.table-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background: rgba(74, 144, 226, 0.1);
+}
+
+table thead th {
+    padding: 15px 20px;
+    text-align: left;
+    color: #4a90e2;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+table tbody tr {
+    border-bottom: 1px solid rgba(74, 144, 226, 0.1);
+    transition: background 0.3s;
+}
+
+table tbody tr:hover {
+    background: rgba(74, 144, 226, 0.05);
+}
+
+table tbody td {
+    padding: 15px 20px;
+    color: #aaa;
+}
+
+table tbody td a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+table tbody td a:hover {
+    color: #7b68ee;
+    text-decoration: underline;
+}
+
+/* ================================
+   LARGEURS COLONNES - BACKUPS (4 colonnes)
+   ================================ */
+#backup-table th:nth-child(1),
+#backup-table td:nth-child(1) { width: 35% !important; } /* fichier */
+
+#backup-table th:nth-child(2),
+#backup-table td:nth-child(2) { width: 18% !important; } /* date */
+
+#backup-table th:nth-child(3),
+#backup-table td:nth-child(3) { width: 12% !important; } /* taille */
+
+#backup-table th:nth-child(4),
+#backup-table td:nth-child(4) { width: 35% !important; } /* actions */
+
+
+/* ================================
+   LARGEURS COLONNES - HISTORIQUE BACKUPS (4 colonnes)
+   ================================ */
+#backup-history-table th:nth-child(1),
+#backup-history-table td:nth-child(1) { width: 15% !important; } /* date */
+
+#backup-history-table th:nth-child(2),
+#backup-history-table td:nth-child(2) { width: 15% !important; } /* action */
+
+#backup-history-table th:nth-child(3),
+#backup-history-table td:nth-child(3) { width: 35% !important; } /* fichier */
+
+#backup-history-table th:nth-child(4),
+#backup-history-table td:nth-child(4) { width: 35% !important; } /* détails */
+
+
 @keyframes blink {
     0%, 49% {
         opacity: 1;

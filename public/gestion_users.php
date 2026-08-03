@@ -45,28 +45,28 @@ if ($dbError === null) {
                     }
                     $stmt = $pdo->prepare('UPDATE users SET role = :role WHERE id = :id');
                     $stmt->execute(['role' => $newRole, 'id' => $targetId]);
-                    log_user_role_changed($targetId, $target['email'], (int) $target['role'], $newRole);
+                    log_user_role_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], (int) $target['role'], $newRole); // LOGS
                     ds_flash_set('success', "Rôle mis à jour pour " . $target['first_name'] . ' ' . $target['last_name'] . '.');
                     break;
 
                 case 'unlock':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 1, failed_login_attempts = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
-                    log_user_unblocked($currentUserId, $currentUser['email'], $targetId, $target['email']);
+                    log_user_unblocked($currentUserId, $currentUser['email'], $targetId, $target['email']); // LOGS
                     ds_flash_set('success', "Compte débloqué.");
                     break;
 
                 case 'deactivate':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
-                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], false);
+                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], false); // LOGS
                     ds_flash_set('success', "Compte désactivé.");
                     break;
 
                 case 'activate':
                     $stmt = $pdo->prepare('UPDATE users SET is_active = 1, failed_login_attempts = 0 WHERE id = :id');
                     $stmt->execute(['id' => $targetId]);
-                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], true);
+                    log_user_status_changed($currentUserId, $currentUser['email'], $targetId, $target['email'], true); // LOGS
                     ds_flash_set('success', "Compte réactivé.");
                     break;
 
@@ -85,7 +85,7 @@ if ($dbError === null) {
                     ]);
                     $del = $pdo->prepare('DELETE FROM users WHERE id = :id');
                     $del->execute(['id' => $targetId]);
-                    log_user_deleted($currentUserId, $currentUser['email'], $targetId, $target['email'], $target['first_name'], $target['last_name']);
+                    log_user_deleted($currentUserId, $currentUser['email'], $targetId, $target['email'], $target['first_name'], $target['last_name']); // LOGS
                     ds_flash_set('success', "Compte supprimé (archivé dans le journal de suppression).");
                     break;
 
