@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
               <input type="email" id="reg-email" name="email" placeholder="prenom.nom@organisme.fr" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
           </div>
           <div class="auth-field">
-              <label for="reg-password">Mot de passe (8-72 caractères, avec majuscule, minuscule, chiffre et caractère spécial)</label>
+              <label for="reg-password">Mot de passe (min. 8 caractères, avec majuscule, minuscule, chiffre et caractère spécial)</label>
               <input type="password" id="reg-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" maxlength="72"
                 pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,72}"
                 title="8 à 72 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial." required>
