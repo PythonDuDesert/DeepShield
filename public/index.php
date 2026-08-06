@@ -10,6 +10,7 @@ $navActive = 'home';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DeepShield — Détection de deepfakes pour la vérification KYC</title>
 <link href="assets/css/site.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/images/bouclier.ico" type="image/x-icon">
 </head>
 <body>
 
