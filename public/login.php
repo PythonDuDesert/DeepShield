@@ -26,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
         $result = $auth->login($email, $password, ds_client_ip());
         if ($result['success']) {
             $user = $auth->currentUser(); // session déjà remplie par login()
+            $_SESSION['message'] = "Connexion réussie ! Bienvenue " . htmlspecialchars($user['first_name']) . " " . htmlspecialchars($user['last_name']) . " !";
+            $_SESSION['message_type'] = "success";
             log_login($user['id'], $email, $user['role']);
             header('Location: dashboard.php');
             exit;
@@ -93,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
 
       <?php if ($sessionExpired): ?>
         <div class="auth-notice" style="margin-top:0;">
-          <span class="icon">⏱️</span>
+          <span class="icon"></span>
           <span>Session expirée pour inactivité. Merci de vous reconnecter.</span>
         </div>
       <?php endif; ?>

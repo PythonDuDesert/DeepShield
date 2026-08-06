@@ -19,6 +19,14 @@ if ($dbError === null) {
     $recent = $videos->listByUser((int) $user['id'], 6);
 }
 
+// Récupérer le message
+$message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
+$message_type = isset($_SESSION['message_type']) ? $_SESSION['message_type'] : '';
+
+// Supprimer le message après l'avoir récupéré
+unset($_SESSION['message']);
+unset($_SESSION['message_type']);
+
 // Terminal
 // Par défaut : jour courant.
 $today = date('d-m-Y');
@@ -49,7 +57,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
 <body>
 
 <canvas id="bg-canvas"></canvas>
-
+<?php include 'flash_message.php'; ?>
 <div class="app-layout">
   <?php include __DIR__ . '/../src/partials/app_sidebar.php'; ?>
 
