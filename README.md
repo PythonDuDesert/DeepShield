@@ -150,7 +150,7 @@ filtres disponibles
    schtasks /delete /tn "DeepShield_AutoBackup" /f
 
 3. Créer la tâche silencieuse :
-   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\wamp64\www\DeepShield\backup_auto.php >> C:\wamp64\www\DeepShield\logs\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
+   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\wamp64\www\DeepShield\src\backup_auto.php >> C:\wamp64\www\DeepShield\BDD\backups\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
 
 4. Vérifier que la tâche est active :
    schtasks /query /tn "DeepShield_AutoBackup"
@@ -164,7 +164,7 @@ filtres disponibles
    schtasks /delete /tn "DeepShield_AutoBackup" /f
 
 3. Créer la tâche silencieuse :
-   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\xampp\htdocs\DeepShield\backup_auto.php >> C:\xampp\htdocs\DeepShield\logs\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
+   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\xampp\htdocs\DeepShield\src\backup_auto.php >> C:\xampp\htdocs\DeepShield\BDD\backups\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
 
 4. Vérifier que la tâche est active :
    schtasks /query /tn "DeepShield_AutoBackup"
