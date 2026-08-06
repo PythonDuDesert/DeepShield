@@ -163,11 +163,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_backup'])) {
         unlink($filePath);
         addHistoryEntry(
             $historyFile,
-            'suppression',
+            'suppression manuelle',
             $fileName,
             "Supprimé par " . ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? '') . " (Taille: $size)"
         );
-        log_BDD_backup($user_id, $email, 'suppression', $fileName, "Taille: $size"); // LOGS
+        log_BDD_backup($user_id, $email, 'suppression manuelle', $fileName, "Taille: $size"); // LOGS
         $_SESSION['message'] = 'Backup supprimé avec succès.';
         $_SESSION['message_type'] = 'success';
     } else {
