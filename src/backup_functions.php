@@ -125,63 +125,72 @@ function generateDatabaseDump($targetPath, &$tableCount = 0, &$rowCount = 0) {
  * Fonction pour l'auto-backup (appelée par le cron)
  * Vérifie si un backup de moins d'1 heure existe, sinon en crée un
  */
-function runAutoBackupCycle($backupDir, $historyFile) {
-    $now = time();
-    $oneHourAgo = $now - 3600; // 1 heure = 3600 secondes
-    $pattern = $backupDir.'/'.DB_NAME.'-autobackup-*.sql';
-    $files = glob($pattern);
+function runAutoBackupCycle(array $config, string $backupDir, string $historyFile): void
+{
+    $pattern = $backupDir . '/deepshield_auto_*.sql';
+    $files = glob($pattern) ?: [];
 
-    // Suppression des backups auto de plus de 24h
-    if ($files) {
-        foreach ($files as $file) {
-            if (($now - filemtime($file)) > 86400) {
-                $size = filesize($file);
-                unlink($file);
-                addHistoryEntry(
-                    $historyFile,
-                    'auto-suppression',
-                    basename($file),
-                    'Suppression auto après 24h ('.formatBytes($size).')'
-                );
-            }
-        }
-    }
+    // Rotation : conserver uniquement les 30 sauvegardes les plus récentes.
+    if (count($files) > 30) {
+        usort($files, fn($a, $b) => filemtime($a) <=> filemtime($b));
 
-    // Vérification s'il existe un backup de moins d'1 heure
-    $recentBackupExists = false;
-    $files = glob($pattern); // Re-scan après suppression
-    if ($files) {
-        foreach ($files as $file) {
-            if (filemtime($file) >= $oneHourAgo) {
-                $recentBackupExists = true;
-                break;
-            }
-        }
-    }
+        foreach (array_slice($files, 0, count($files) - 30) as $file) {
+            @unlink($file);
 
-    // Si aucun backup récent n'existe, en créer un
-    if (!$recentBackupExists) {
-        $fileName = buildAutoBackupFileName();
-        $target = $backupDir.'/'.$fileName;
-        $tables = 0;
-        $rows = 0;
-        $error = generateDatabaseDump($target, $tables, $rows);
-        if (!$error) {
             addHistoryEntry(
                 $historyFile,
-                'auto-création',
-                $fileName,
-                "Backup automatique. Tables: $tables, Lignes: $rows, Taille: ".formatBytes(filesize($target))
-            );
-        } else {
-            addHistoryEntry(
-                $historyFile,
-                'auto-erreur',
-                $fileName,
-                "Erreur lors de la création automatique: $error"
+                'auto-suppression',
+                basename($file),
+                'Rotation automatique (30 sauvegardes maximum)'
             );
         }
+
+        $files = glob($pattern) ?: [];
     }
+
+    // Recherche de la sauvegarde la plus récente.
+    if ($files !== []) {
+        usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+
+        $lastBackup = $files[0];
+        $age = time() - filemtime($lastBackup);
+
+        if ($age < 3600) {
+            return;
+        }
+    }
+
+    $fileName = 'deepshield_auto_' . date('Ymd_His') . '.sql';
+    $target = $backupDir . '/' . $fileName;
+
+    $result = run_mysqldump($config);
+
+    if (!$result['ok']) {
+        addHistoryEntry(
+            $historyFile,
+            'auto-erreur',
+            $fileName,
+            $result['error']
+        );
+        return;
+    }
+
+    if (file_put_contents($target, $result['sql']) === false) {
+        addHistoryEntry(
+            $historyFile,
+            'auto-erreur',
+            $fileName,
+            "Impossible d'écrire le fichier."
+        );
+        return;
+    }
+
+    addHistoryEntry(
+        $historyFile,
+        'auto-création',
+        $fileName,
+        'Sauvegarde SQL créée (' . formatBytes(filesize($target)) . ').'
+    );
 }
 
 /**
@@ -290,5 +299,55 @@ function restoreDatabaseFromSQL($filePath, &$queriesExecuted = 0) {
     }
     
     return null;
+}
+
+/**
+ * Lance mysqldump en sous-processus de façon défensive (même approche
+ * qu'AnalysisRunner::run et que la fonction identique dans backup.php).
+ *
+ * @return array{ok:bool, sql?:string, error?:string}
+ */
+function run_mysqldump(array $config): array
+{
+    if (!function_exists('proc_open')) {
+        return ['ok' => false, 'error' => "proc_open() est désactivé sur ce serveur."];
+    }
+
+    $mysqldump = 'C:\\wamp64\\bin\\mysql\\mysql9.1.0\\bin\\mysqldump.exe';
+
+    $cmd = [
+        $mysqldump,
+        '--host=' . $config['db_host'],
+        '--port=' . (string) $config['db_port'],
+        '--user=' . $config['db_user'],
+        '--single-transaction',
+        '--skip-lock-tables',
+    ];
+
+    if ($config['db_pass'] !== '') {
+        $cmd[] = '--password=' . $config['db_pass'];
+    }
+    $cmd[] = $config['db_name'];
+
+    $descriptorSpec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
+    $process = proc_open($cmd, $descriptorSpec, $pipes);
+
+    if (!is_resource($process)) {
+        return ['ok' => false, 'error' => "Impossible de démarrer mysqldump (vérifiez le PATH)."];
+    }
+
+    fclose($pipes[0]);
+    $stdout = stream_get_contents($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $exitCode = proc_close($process);
+
+    if ($exitCode !== 0 || trim((string) $stdout) === '') {
+        $detail = $stderr !== '' ? trim($stderr) : 'Aucune sortie.';
+        return ['ok' => false, 'error' => "mysqldump a échoué (code $exitCode). $detail"];
+    }
+
+    return ['ok' => true, 'sql' => $stdout];
 }
 ?>

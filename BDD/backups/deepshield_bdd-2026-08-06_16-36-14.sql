@@ -1,4 +1,4 @@
--- Dump deepshield_bdd - 2026-08-03 13:11:21
+-- Dump deepshield_bdd - 2026-08-06 16:36:14
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -15,7 +15,9 @@ CREATE TABLE `account_deletion_logs` (
   `reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `deleted_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `account_deletion_logs` (`id`,`user_id`,`first_name`,`last_name`,`email`,`role`,`reason`,`deleted_at`) VALUES ('1','5','1','2','1@gmail.com','2','Suppression manuelle via la gestion des utilisateurs.','2026-08-03 13:58:23');
 
 DROP TABLE IF EXISTS `assistance`;
 CREATE TABLE `assistance` (
@@ -66,11 +68,12 @@ CREATE TABLE `users` (
   `reset_token_expires` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
-INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('1','olivier.yammine@gmail.com','$2y$10$bDerZejFmniCRLFq8DGthu3UDKI69LjsteZcfgiAgwQfX3PYENv1.','Olivier','YAMMINE','default-avatar.png','0','1','0','2026-07-13 11:25:28','2026-08-03 12:59:42','2026-08-03 12:59:42',NULL,NULL,NULL,NULL,NULL);
-INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('2','omar.tanaradje@gmail.com','$2y$10$qiZsHIr4t5a6.5Tcuv46MO7sQ2ZivfhICUs2Sl5kRQDjTKksDFyQy','Omar','TANARADJE','default-avatar.png','0','1','0','2026-07-13 13:21:30','2026-07-13 13:22:00',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('3','lucas.duhoo@gmail.com','$2y$10$bPkFpvBy27EOi5B2osTC.enabmYQ8KXTWtqc8cyZ2iZZlBm5.rnmS','Lucas','DUHOO','default-avatar.png','0','1','0','2026-07-13 13:21:52','2026-07-13 13:22:05',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('1','olivier.yammine@gmail.com','$2y$10$bDerZejFmniCRLFq8DGthu3UDKI69LjsteZcfgiAgwQfX3PYENv1.','Olivier','YAMMINE','default-avatar.png','0','1','0','2026-07-13 12:25:28','2026-08-06 16:35:23','2026-08-06 16:35:23','2026-08-06 01:38:36',NULL,NULL,NULL,NULL);
+INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('2','omar.tanaradje@gmail.com','$2y$10$qiZsHIr4t5a6.5Tcuv46MO7sQ2ZivfhICUs2Sl5kRQDjTKksDFyQy','Omar','TANARADJE','default-avatar.png','0','1','0','2026-07-13 14:21:30','2026-08-03 13:43:35',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('3','lucas.duhoo@gmail.com','$2y$10$bPkFpvBy27EOi5B2osTC.enabmYQ8KXTWtqc8cyZ2iZZlBm5.rnmS','Lucas','DUHOO','default-avatar.png','0','1','0','2026-07-13 14:21:52','2026-07-13 14:22:05',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` (`id`,`email`,`password_hash`,`first_name`,`last_name`,`profile_photo`,`role`,`is_active`,`failed_login_attempts`,`created_at`,`updated_at`,`last_login`,`last_try_login`,`email_token`,`email_token_expires`,`reset_token`,`reset_token_expires`) VALUES ('4','test@gmail.com','$2y$10$/Onn.KjNuqn7bJB2WSBLH.lMqn94LDRmkJ99aLMrrev1iyWXEDgui','Test','TESTEUR','default-avatar.png','2','1','0','2026-08-03 13:44:34','2026-08-03 14:03:46','2026-08-03 14:03:46',NULL,NULL,NULL,NULL,NULL);
 
 DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
