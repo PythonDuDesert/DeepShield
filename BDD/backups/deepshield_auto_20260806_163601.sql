@@ -141,7 +141,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'olivier.yammine@gmail.com','$2y$10$bDerZejFmniCRLFq8DGthu3UDKI69LjsteZcfgiAgwQfX3PYENv1.','Olivier','YAMMINE','default-avatar.png',0,1,0,'2026-07-13 10:25:28','2026-08-06 13:41:40','2026-08-06 13:41:40','2026-08-05 23:38:36',NULL,NULL,NULL,NULL),(2,'omar.tanaradje@gmail.com','$2y$10$qiZsHIr4t5a6.5Tcuv46MO7sQ2ZivfhICUs2Sl5kRQDjTKksDFyQy','Omar','TANARADJE','default-avatar.png',0,1,0,'2026-07-13 12:21:30','2026-08-03 11:43:35',NULL,NULL,NULL,NULL,NULL,NULL),(3,'lucas.duhoo@gmail.com','$2y$10$bPkFpvBy27EOi5B2osTC.enabmYQ8KXTWtqc8cyZ2iZZlBm5.rnmS','Lucas','DUHOO','default-avatar.png',0,1,0,'2026-07-13 12:21:52','2026-07-13 12:22:05',NULL,NULL,NULL,NULL,NULL,NULL),(4,'test@gmail.com','$2y$10$/Onn.KjNuqn7bJB2WSBLH.lMqn94LDRmkJ99aLMrrev1iyWXEDgui','Test','TESTEUR','default-avatar.png',2,1,0,'2026-08-03 11:44:34','2026-08-03 12:03:46','2026-08-03 12:03:46',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` VALUES (1,'olivier.yammine@gmail.com','$2y$10$bDerZejFmniCRLFq8DGthu3UDKI69LjsteZcfgiAgwQfX3PYENv1.','Olivier','YAMMINE','default-avatar.png',0,1,0,'2026-07-13 10:25:28','2026-08-06 14:35:23','2026-08-06 14:35:23','2026-08-05 23:38:36',NULL,NULL,NULL,NULL),(2,'omar.tanaradje@gmail.com','$2y$10$qiZsHIr4t5a6.5Tcuv46MO7sQ2ZivfhICUs2Sl5kRQDjTKksDFyQy','Omar','TANARADJE','default-avatar.png',0,1,0,'2026-07-13 12:21:30','2026-08-03 11:43:35',NULL,NULL,NULL,NULL,NULL,NULL),(3,'lucas.duhoo@gmail.com','$2y$10$bPkFpvBy27EOi5B2osTC.enabmYQ8KXTWtqc8cyZ2iZZlBm5.rnmS','Lucas','DUHOO','default-avatar.png',0,1,0,'2026-07-13 12:21:52','2026-07-13 12:22:05',NULL,NULL,NULL,NULL,NULL,NULL),(4,'test@gmail.com','$2y$10$/Onn.KjNuqn7bJB2WSBLH.lMqn94LDRmkJ99aLMrrev1iyWXEDgui','Test','TESTEUR','default-avatar.png',2,1,0,'2026-08-03 11:44:34','2026-08-03 12:03:46','2026-08-03 12:03:46',NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,4 +183,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-06 15:48:01
+-- Dump completed on 2026-08-06 16:36:01

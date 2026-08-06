@@ -1,18 +1,2 @@
-[2026-08-06 15:48:01] Démarrage de la sauvegarde automatique (base « deepshield_bdd »)…
-[2026-08-06 15:48:01] Sauvegarde SQL écrite : C:\wamp64\www\DeepShield/BDD/backups/deepshield_auto_20260806_154801.sql (7.9 Ko).
-[2026-08-06 15:48:01] Rotation terminée (max 30 fichiers conservés).
-[2026-08-06 15:50:01] Sauvegarde ignorée : dernière sauvegarde il y a 0 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:51:01] Sauvegarde ignorée : dernière sauvegarde il y a 1 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:52:01] Sauvegarde ignorée : dernière sauvegarde il y a 2 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:53:01] Sauvegarde ignorée : dernière sauvegarde il y a 3 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:54:01] Sauvegarde ignorée : dernière sauvegarde il y a 4 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:55:01] Sauvegarde ignorée : dernière sauvegarde il y a 5 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:56:01] Sauvegarde ignorée : dernière sauvegarde il y a 6 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:57:01] Sauvegarde ignorée : dernière sauvegarde il y a 7 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:58:02] Sauvegarde ignorée : dernière sauvegarde il y a 8 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 15:59:02] Sauvegarde ignorée : dernière sauvegarde il y a 9 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 16:00:02] Sauvegarde ignorée : dernière sauvegarde il y a 10 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 16:01:02] Sauvegarde ignorée : dernière sauvegarde il y a 11 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 16:02:02] Sauvegarde ignorée : dernière sauvegarde il y a 12 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 16:03:02] Sauvegarde ignorée : dernière sauvegarde il y a 13 min (deepshield_auto_20260806_154801.sql).
-[2026-08-06 16:04:02] Sauvegarde ignorée : dernière sauvegarde il y a 14 min (deepshield_auto_20260806_144801.sql).
+[2026-08-06 16:36:01] Lancement du cycle de sauvegarde automatique...
+[2026-08-06 16:36:01] Cycle terminé.
