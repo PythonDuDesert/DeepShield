@@ -55,13 +55,10 @@ if ($backups !== []) {
     $age = time() - filemtime($lastBackup);
 
     if ($age < 3600) {
-        $remaining = 3600 - $age;
-
         cron_log(sprintf(
-            "Sauvegarde ignorée : dernière sauvegarde il y a %d min (%s). Prochaine dans %d min.",
+            "Sauvegarde ignorée : dernière sauvegarde il y a %d min (%s).",
             intdiv($age, 60),
             basename($lastBackup),
-            intdiv($remaining, 60)
         ));
 
         exit(0);
