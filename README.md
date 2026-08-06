@@ -13,11 +13,11 @@ ROLES : 0='admin'; 1='premium user'; 2='user'
 
 INFORMATION SUR LES LOGS : 
 
-'info' → normal<br>
-'important_info' → action sensible<br>
-'warning' → avertissement/comportement suspect<br>
-'error' → problème technique/erreur critique<br>
-'BDD' → contexte technique spécifique<br>
+'info' -> normal<br>
+'important_info' -> action sensible<br>
+'warning' -> avertissement/comportement suspect<br>
+'error' -> problème technique/erreur critique<br>
+'BDD' -> contexte technique spécifique<br>
 
 filtres disponibles
 
@@ -135,6 +135,71 @@ filtres disponibles
 | Fonction | Type | Description |
 |---|---|---|
 | `cleanup_old_logs` | `maintenance` | Supprime les logs anciens (> X jours) |
+
+---
+
+<br>
+# Configuration du Planificateur de tâches Windows — Cron SecureMail
+
+---
+
+## WAMP
+
+1. Ouvrir l'invite de commandes en tant qu'administrateur
+2. Supprimer l'ancienne tâche si elle existe :
+   schtasks /delete /tn "DeepShield_AutoBackup" /f
+
+3. Créer la tâche silencieuse :
+   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\wamp64\www\DeepShield\backup_auto.php >> C:\wamp64\www\DeepShield\logs\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
+
+4. Vérifier que la tâche est active :
+   schtasks /query /tn "DeepShield_AutoBackup"
+
+---
+
+## XAMPP
+
+1. Ouvrir l'invite de commandes en tant qu'administrateur
+2. Supprimer l'ancienne tâche si elle existe :
+   schtasks /delete /tn "DeepShield_AutoBackup" /f
+
+3. Créer la tâche silencieuse :
+   schtasks /create /tn "DeepShield_AutoBackup" /tr "cmd /c php C:\xampp\htdocs\DeepShield\backup_auto.php >> C:\xampp\htdocs\DeepShield\logs\cron.log 2>&1" /sc minute /mo 1 /ru SYSTEM /f
+
+4. Vérifier que la tâche est active :
+   schtasks /query /tn "DeepShield_AutoBackup"
+
+---
+
+## Vérification du bon fonctionnement
+
+Après quelques minutes, vérifier que le fichier de log est bien alimenté :
+   type C:\wamp64\www\DeepShield\logs\cron.log       (WAMP)
+   type C:\xampp\htdocs\DeepShield\logs\cron.log     (XAMPP)
+
+Chaque ligne doit ressembler à :
+   [2026-03-21 11:43:46] Démarrage du cycle d'auto-backup...
+   [2026-03-21 11:43:46] Cycle d'auto-backup terminé avec succès.
+
+---
+
+## Suppression de la tâche
+
+Pour désactiver le cron :
+   schtasks /delete /tn "DeepShield_AutoBackup" /f
+
+---
+
+## Notes
+
+- Le script tourne en arrière-plan sous le compte SYSTEM, aucune fenêtre ne s'ouvre.
+- Le fichier cron.log est distinct des logs applicatifs (logs/logs.json).
+- Le dossier logs/ doit exister avant la première exécution.
+- Le chemin vers php.exe est automatiquement résolu si WAMP ou XAMPP est correctement
+  installé et que PHP est dans le PATH système. Si ce n'est pas le cas, remplacer
+  "php" par le chemin complet :
+     WAMP  : C:\wamp64\bin\php\phpX.X.X\php.exe
+     XAMPP : C:\xampp\php\php.exe
 
 ---
 
