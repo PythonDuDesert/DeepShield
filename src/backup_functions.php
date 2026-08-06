@@ -131,17 +131,17 @@ function runAutoBackupCycle($backupDir, $historyFile) {
     $pattern = $backupDir.'/'.DB_NAME.'-autobackup-*.sql';
     $files = glob($pattern);
 
-    // Suppression des backups auto de plus de 24h
+    // Suppression des backups auto de plus de 72h
     if ($files) {
         foreach ($files as $file) {
-            if (($now - filemtime($file)) > 86400) {
+            if (($now - filemtime($file)) > 259200) {
                 $size = filesize($file);
                 unlink($file);
                 addHistoryEntry(
                     $historyFile,
                     'auto-suppression',
                     basename($file),
-                    'Suppression auto après 24h ('.formatBytes($size).')'
+                    'Suppression auto après 72h ('.formatBytes($size).')'
                 );
             }
         }
