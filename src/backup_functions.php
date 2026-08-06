@@ -156,12 +156,6 @@ function runAutoBackupCycle(array $config, string $backupDir, string $historyFil
         $age = time() - filemtime($lastBackup);
 
         if ($age < 3600) {
-            addHistoryEntry(
-                $historyFile,
-                'auto-ignore',
-                basename($lastBackup),
-                'Dernière sauvegarde datant de ' . intdiv($age, 60) . ' minute(s).'
-            );
             return;
         }
     }
