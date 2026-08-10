@@ -92,8 +92,6 @@ $global = $report['global'] ?? null;
           </div>
         <?php endif; ?>
 
-        <p class="disclaimer">⚠ <?= e($global['disclaimer'] ?? '') ?></p>
-
         <dl class="meta-list">
           <div><dt>Généré le</dt><dd><?= e(str_replace('T', ' ', substr($report['generated_at'] ?? '', 0, 19))) ?> UTC</dd></div>
           <div><dt>Temps de traitement</dt><dd><?= e((string) ($report['elapsed_seconds'] ?? '—')) ?> s</dd></div>
