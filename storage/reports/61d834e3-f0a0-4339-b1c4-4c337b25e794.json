@@ -1,0 +1,12 @@
+{
+    "status": "error",
+    "error": "Réponse du moteur d'analyse illisible (JSON invalide).",
+    "generated_at": "2026-08-10T10:22:20+00:00",
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "test_video7.mp4",
+        "audio_original_name": "",
+        "kept_for_retraining": false
+    },
+    "id": "61d834e3-f0a0-4339-b1c4-4c337b25e794"
+}
