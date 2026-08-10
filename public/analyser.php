@@ -47,7 +47,7 @@ $flash = ds_flash_get();
             <input type="file" id="video_file" name="video_file" accept=".mp4,.mov">
           </div>
           <div class="dropzone" id="dropzone-audio">
-            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3) — optionnel, moteur en développement</label>
+            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3) — optionnel</label>
             <input type="file" id="audio_file" name="audio_file" accept=".wav,.mp3">
           </div>
 
@@ -78,7 +78,7 @@ $flash = ds_flash_get();
         </ol>
         <hr class="sep">
         <h2 style="font-size:0.95em;">Formats acceptés</h2>
-        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code> (moteur audio en développement).</p>
+        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code> (score heuristique en attendant un modèle ASVspoof entraîné).</p>
         <hr class="sep">
         <p class="muted">
           ⚠ Le score produit est une aide à la décision. Il ne remplace jamais un contrôle humain

@@ -15,13 +15,55 @@ if ($dbError === null) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'] ?? '';
-        $targetId = (int) ($_POST['user_id'] ?? 0);
 
         if (!ds_csrf_verify($_POST['csrf_token'] ?? null)) {
             ds_flash_set('error', "Requête invalide ou expirée, merci de réessayer.");
             header('Location: gestion_users.php');
             exit;
         }
+
+        // Actions concernant les demandes d'assistance (onglet "Assistance")
+        if (in_array($action, ['mark_lu', 'resolve_assistance', 'close_assistance'], true)) {
+            $assistId = (int) ($_POST['assistance_id'] ?? 0);
+            $stmt = $pdo->prepare('SELECT id FROM assistance WHERE id = :id');
+            $stmt->execute(['id' => $assistId]);
+
+            if ($stmt->fetch() === false) {
+                ds_flash_set('error', "Demande d'assistance introuvable.");
+            } else {
+                switch ($action) {
+                    case 'mark_lu':
+                        $stmt = $pdo->prepare("UPDATE assistance SET status = 'lu' WHERE id = :id AND status = 'nouveau'");
+                        $stmt->execute(['id' => $assistId]);
+                        ds_flash_set('success', "Demande marquée comme lue.");
+                        break;
+
+                    case 'resolve_assistance':
+                        $notes = trim($_POST['admin_notes'] ?? '');
+                        if (mb_strlen($notes) < 5) {
+                            ds_flash_set('error', "Merci de rédiger une réponse d'au moins 5 caractères.");
+                            break;
+                        }
+                        $stmt = $pdo->prepare(
+                            "UPDATE assistance SET status = 'resolu', admin_notes = :notes, date_response = NOW() WHERE id = :id"
+                        );
+                        $stmt->execute(['notes' => $notes, 'id' => $assistId]);
+                        ds_flash_set('success', "Réponse envoyée, demande marquée comme résolue.");
+                        break;
+
+                    case 'close_assistance':
+                        $stmt = $pdo->prepare("UPDATE assistance SET status = 'fermé' WHERE id = :id");
+                        $stmt->execute(['id' => $assistId]);
+                        ds_flash_set('success', "Demande fermée.");
+                        break;
+                }
+            }
+
+            header('Location: gestion_users.php#assistance');
+            exit;
+        }
+
+        $targetId = (int) ($_POST['user_id'] ?? 0);
 
         $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->execute(['id' => $targetId]);
@@ -102,10 +144,21 @@ if ($dbError === null) {
 $flash = ds_flash_get();
 $csrfToken = ds_csrf_token();
 $users = [];
+$assistanceRequests = [];
 if ($dbError === null) {
     $stmt = $pdo->query('SELECT id, email, first_name, last_name, role, is_active, failed_login_attempts, created_at, last_login FROM users ORDER BY created_at DESC');
     $users = $stmt->fetchAll();
+
+    $stmt = $pdo->query(
+        "SELECT * FROM assistance
+         ORDER BY FIELD(status, 'nouveau', 'lu', 'resolu', 'fermé'), date_submission DESC"
+    );
+    $assistanceRequests = $stmt->fetchAll();
 }
+
+$assistStatusLabels = ['nouveau' => 'Nouveau', 'lu' => 'Lu', 'resolu' => 'Résolu', 'fermé' => 'Fermé'];
+$assistStatusBadge = ['nouveau' => 'badge-warn', 'lu' => 'badge-neutral', 'resolu' => 'badge-ok', 'fermé' => 'badge-neutral'];
+$assistOpenCount = count(array_filter($assistanceRequests, fn($a) => $a['status'] === 'nouveau'));
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -138,6 +191,16 @@ if ($dbError === null) {
       <div class="notice" style="margin-bottom:18px;<?= $flash['type'] === 'error' ? 'border-color:var(--danger);background:rgba(248,113,113,0.08);color:var(--danger);' : '' ?>"><?= e($flash['message']) ?></div>
     <?php endif; ?>
 
+    <nav class="page-tabs">
+      <button type="button" class="page-tab active" data-tab="users" onclick="switchPageTab('users', this)">
+        👥 Utilisateurs <span class="tab-count"><?= count($users) ?></span>
+      </button>
+      <button type="button" class="page-tab" data-tab="assistance" onclick="switchPageTab('assistance', this)">
+        💬 Assistance <span class="tab-count"><?= $assistOpenCount ?></span>
+      </button>
+    </nav>
+
+    <div id="tab-users" class="page-tab-panel active">
     <section class="panel">
       <?php if (empty($users)): ?>
         <div class="empty-state"><p>Aucun compte enregistré.</p></div>
@@ -196,11 +259,81 @@ if ($dbError === null) {
     </section>
 
     <p class="disclaimer">Cette page est réservée aux administrateurs. Chaque suppression est archivée dans le journal de suppression (<code>account_deletion_logs</code>).</p>
+    </div>
+
+    <div id="tab-assistance" class="page-tab-panel">
+      <?php if (empty($assistanceRequests)): ?>
+        <div class="empty-state"><p>Aucune demande d'assistance pour le moment.</p></div>
+      <?php else: ?>
+        <?php foreach ($assistanceRequests as $ar): ?>
+          <div class="assist-card status-<?= e($ar['status']) ?>">
+            <div class="assist-card-head">
+              <div>
+                <h3><?= e($ar['subject']) ?></h3>
+                <div class="assist-meta">
+                  <span>👤 <?= e($ar['first_name'] . ' ' . $ar['last_name']) ?></span>
+                  <span>📧 <?= e($ar['email']) ?></span>
+                  <span>🏷️ <?= e($roleLabels[(int) $ar['role']] ?? 'Utilisateur') ?></span>
+                  <span>🕒 <?= e(date('d/m/Y H:i', strtotime((string) $ar['date_submission']))) ?></span>
+                </div>
+              </div>
+              <span class="badge <?= $assistStatusBadge[$ar['status']] ?? 'badge-neutral' ?>"><?= e($assistStatusLabels[$ar['status']] ?? $ar['status']) ?></span>
+            </div>
+
+            <div class="assist-message"><?= nl2br(e($ar['message'])) ?></div>
+
+            <?php if (!empty($ar['admin_notes'])): ?>
+              <div class="assist-admin-notes"><strong>Réponse de l'équipe</strong><?= nl2br(e($ar['admin_notes'])) ?></div>
+            <?php endif; ?>
+
+            <div class="assist-actions">
+              <?php if ($ar['status'] === 'nouveau'): ?>
+                <form method="post" style="display:inline;">
+                  <input type="hidden" name="action" value="mark_lu">
+                  <input type="hidden" name="assistance_id" value="<?= (int) $ar['id'] ?>">
+                  <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                  <button type="submit" class="btn-tiny">Marquer comme lue</button>
+                </form>
+              <?php endif; ?>
+
+              <?php if (!in_array($ar['status'], ['resolu', 'fermé'], true)): ?>
+                <button type="button" class="btn-tiny tiny-cyan" onclick="openResolveForm(<?= (int) $ar['id'] ?>)">Répondre / Résoudre</button>
+              <?php endif; ?>
+
+              <?php if ($ar['status'] !== 'fermé'): ?>
+                <form method="post" style="display:inline;" onsubmit="return confirm('Fermer cette demande ?');">
+                  <input type="hidden" name="action" value="close_assistance">
+                  <input type="hidden" name="assistance_id" value="<?= (int) $ar['id'] ?>">
+                  <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                  <button type="submit" class="btn-tiny tiny-danger">Fermer</button>
+                </form>
+              <?php endif; ?>
+            </div>
+
+            <?php if (!in_array($ar['status'], ['resolu', 'fermé'], true)): ?>
+              <div id="resolve-form-<?= (int) $ar['id'] ?>" class="assist-resolve-form">
+                <form method="post">
+                  <input type="hidden" name="action" value="resolve_assistance">
+                  <input type="hidden" name="assistance_id" value="<?= (int) $ar['id'] ?>">
+                  <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                  <textarea name="admin_notes" placeholder="Écrivez votre réponse à l'utilisateur..." required minlength="5"></textarea>
+                  <div class="assist-actions">
+                    <button type="submit" class="btn-tiny tiny-ok">Envoyer la réponse</button>
+                    <button type="button" class="btn-tiny" onclick="closeResolveForm(<?= (int) $ar['id'] ?>)">Annuler</button>
+                  </div>
+                </form>
+              </div>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
 
     <?php endif; ?>
   </main>
 </div>
 
 <script src="assets/js/site.js"></script>
+<script src="assets/js/tabs.js"></script>
 </body>
 </html>

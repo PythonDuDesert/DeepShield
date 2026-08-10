@@ -418,6 +418,87 @@
 .faq-contact h2 { font-family: var(--font-display); font-size: 1.15em; margin-bottom: 8px; }
 .faq-contact p { color: var(--text-muted); font-size: 0.9em; margin-bottom: 18px; }
 
+/* ────── Champs de formulaire génériques (dans .field) ────── */
+.field input[type="text"], .field input[type="email"], .field input[type="password"], .field textarea {
+    width: 100%; padding: 11px 13px; border-radius: 10px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.09);
+    color: var(--text-main); font-family: var(--font-body); font-size: 0.93em;
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34,211,238,0.12); }
+.field textarea { resize: vertical; }
+.field-hint { color: var(--text-muted); font-size: 0.78em; margin-top: 6px; line-height: 1.5; }
+
+/* ────── Onglets de page (gestion_users, profile...) ────── */
+.page-tabs {
+    display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
+}
+.page-tab {
+    background: transparent; border: none; padding: 10px 2px 12px; margin-bottom: -1px;
+    color: var(--text-muted); font-family: var(--font-body); font-size: 0.92em; font-weight: 600;
+    cursor: pointer; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s;
+    display: flex; align-items: center; gap: 8px;
+}
+.page-tab:hover { color: var(--text-main); }
+.page-tab.active { color: var(--cyan-bright); border-bottom-color: var(--cyan); }
+.page-tab .tab-count {
+    background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 0.76em;
+    padding: 1px 8px; border-radius: 20px; font-family: var(--font-mono);
+}
+.page-tab.active .tab-count { background: rgba(34,211,238,0.14); color: var(--cyan-bright); }
+
+.page-tab-panel { display: none; }
+.page-tab-panel.active { display: block; }
+
+/* ────── Cartes de demandes d'assistance (admin + profil) ────── */
+.assist-card {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 14px;
+}
+.assist-card.status-nouveau { border-color: rgba(251,191,36,0.35); }
+.assist-card.status-resolu { border-color: rgba(52,211,153,0.3); }
+.assist-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.assist-card-head h3 { font-family: var(--font-display); font-size: 0.98em; }
+.assist-meta { display: flex; gap: 12px; flex-wrap: wrap; color: var(--text-muted); font-size: 0.78em; margin-top: 6px; }
+.assist-message {
+    color: var(--text-main); font-size: 0.88em; line-height: 1.65; white-space: pre-wrap;
+    padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.assist-admin-notes {
+    background: rgba(34,211,238,0.05); border: 1px solid rgba(34,211,238,0.15); border-radius: 10px;
+    padding: 10px 14px; font-size: 0.85em; color: var(--text-muted); margin-top: 12px; white-space: pre-wrap;
+}
+.assist-admin-notes strong { color: var(--cyan-bright); display: block; margin-bottom: 4px; font-size: 0.9em; }
+.assist-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.assist-resolve-form { display: none; margin-top: 12px; }
+.assist-resolve-form textarea { min-height: 76px; margin-bottom: 10px; }
+
+.btn-tiny {
+    background: transparent; border: 1px solid rgba(238,242,251,0.15); color: var(--text-muted);
+    border-radius: 7px; padding: 7px 13px; font-size: 0.78em; cursor: pointer;
+    transition: all .2s; font-family: var(--font-body);
+}
+.btn-tiny:hover { color: var(--text-main); border-color: rgba(238,242,251,0.3); }
+.btn-tiny.tiny-cyan { border-color: rgba(34,211,238,0.35); color: var(--cyan-bright); }
+.btn-tiny.tiny-cyan:hover { background: rgba(34,211,238,0.08); }
+.btn-tiny.tiny-ok { border-color: rgba(52,211,153,0.35); color: var(--ok); }
+.btn-tiny.tiny-ok:hover { background: rgba(52,211,153,0.08); }
+.btn-tiny.tiny-danger { border-color: rgba(248,113,113,0.35); color: var(--danger); }
+.btn-tiny.tiny-danger:hover { background: rgba(248,113,113,0.08); }
+
+/* ────── Page profil ────── */
+.profile-head { display: flex; align-items: center; gap: 18px; }
+.profile-avatar-lg {
+    width: 62px; height: 62px; border-radius: 50%; background: var(--gradient-main);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-family: var(--font-display); font-size: 1.3em; font-weight: 700; color: #05070d;
+}
+.role-pill {
+    display: inline-block; margin-top: 8px; padding: 3px 11px; border-radius: 20px;
+    font-size: 0.72em; font-weight: 700; letter-spacing: .3px;
+    background: rgba(34,211,238,0.1); color: var(--cyan-bright); border: 1px solid rgba(34,211,238,0.25);
+}
+
 @media print {
     .navbar, .actions, #bg-canvas { display: none; }
     body { background: #fff; color: #111; }
