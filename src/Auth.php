@@ -66,19 +66,26 @@ final class Auth
         }
 
         $hash = password_hash($password, PASSWORD_DEFAULT);
+        $emailToken = bin2hex(random_bytes(32));
 
         $stmt = $this->pdo->prepare(
-            'INSERT INTO users (email, password_hash, first_name, last_name, role, is_active, created_at, updated_at)
-             VALUES (:email, :hash, :first_name, :last_name, 2, 1, NOW(), NOW())'
+            'INSERT INTO users (email, password_hash, first_name, last_name, role, is_active, email_token, email_token_expires, created_at, updated_at)
+             VALUES (:email, :hash, :first_name, :last_name, 2, 1, :email_token, DATE_ADD(NOW(), INTERVAL 24 HOUR), NOW(), NOW())'
         );
         $stmt->execute([
             'email' => $email,
             'hash' => $hash,
             'first_name' => $firstName,
             'last_name' => $lastName,
+            'email_token' => $emailToken,
         ]);
 
-        return ['success' => true, 'error' => null, 'user_id' => (int) $this->pdo->lastInsertId()];
+        return [
+            'success' => true,
+            'error' => null,
+            'user_id' => (int) $this->pdo->lastInsertId(),
+            'email_token' => $emailToken,
+        ];
     }
 
     /**
@@ -114,6 +121,10 @@ final class Auth
             return ['success' => false, 'error' => "Adresse e-mail ou mot de passe incorrect."];
         }
 
+        if (!empty($user['email_token'])) {
+            return ['success' => false, 'error' => "Merci de confirmer votre adresse email avant de vous connecter.", 'unverified' => true];
+        }
+
         // Connexion réussie : on réinitialise le compteur d'échecs.
         $stmt = $this->pdo->prepare(
             'UPDATE users SET failed_login_attempts = 0, last_login = NOW() WHERE id = :id'
@@ -136,6 +147,132 @@ final class Auth
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
+    }
+
+    /** Valide un token de confirmation d'email et active le compte s'il est correct. */
+    public function verifyEmail(string $token): bool
+    {
+        if ($token === '') {
+            return false;
+        }
+        $stmt = $this->pdo->prepare('SELECT id FROM users WHERE email_token = :token AND email_token_expires > NOW()');
+        $stmt->execute(['token' => $token]);
+        $user = $stmt->fetch();
+        if ($user === false) {
+            return false;
+        }
+        $stmt = $this->pdo->prepare('UPDATE users SET email_token = NULL, email_token_expires = NULL WHERE id = :id');
+        $stmt->execute(['id' => $user['id']]);
+        return true;
+    }
+
+    /**
+     * Régénère le token de confirmation d'un compte pas encore vérifié.
+     * @return array{token:string, first_name:string}|null null si le compte n'existe pas,
+     *         est déjà vérifié, ou si un token a déjà été émis récemment (anti-spam).
+     */
+    public function resendEmailToken(string $email): ?array
+    {
+        $email = trim(strtolower($email));
+        $stmt = $this->pdo->prepare('SELECT id, first_name, email_token, email_token_expires FROM users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetch();
+        if ($user === false || empty($user['email_token'])) {
+            return null;
+        }
+        if (!empty($user['email_token_expires'])) {
+            $expiresAt = strtotime((string) $user['email_token_expires']);
+            if ($expiresAt !== false && ($expiresAt - time()) > 23 * 3600 + 55 * 60) {
+                return null; // token émis il y a moins de 5 min
+            }
+        }
+        $newToken = bin2hex(random_bytes(32));
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET email_token = :token, email_token_expires = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE id = :id'
+        );
+        $stmt->execute(['token' => $newToken, 'id' => $user['id']]);
+        return ['token' => $newToken, 'first_name' => $user['first_name']];
+    }
+
+    /**
+     * @return array{token:string, first_name:string, user_id:int}|null null si le compte n'existe pas ou est inactif.
+     */
+    public function requestPasswordReset(string $email): ?array
+    {
+        $email = trim(strtolower($email));
+        $stmt = $this->pdo->prepare('SELECT id, first_name FROM users WHERE email = :email AND is_active = 1');
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetch();
+        if ($user === false) {
+            return null;
+        }
+        $token = bin2hex(random_bytes(32));
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET reset_token = :token, reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = :id'
+        );
+        $stmt->execute(['token' => $token, 'id' => $user['id']]);
+        return ['token' => $token, 'first_name' => $user['first_name'], 'user_id' => (int) $user['id']];
+    }
+
+    public function isResetTokenValid(string $token): bool
+    {
+        if ($token === '') {
+            return false;
+        }
+        $stmt = $this->pdo->prepare('SELECT id FROM users WHERE reset_token = :token AND reset_token_expires > NOW()');
+        $stmt->execute(['token' => $token]);
+        return $stmt->fetch() !== false;
+    }
+
+    /**
+     * @return array{success:bool, error:?string, user_id?:int, email?:string, first_name?:string}
+     */
+    public function resetPassword(string $token, string $newPassword): array
+    {
+        if ($token === '') {
+            return ['success' => false, 'error' => "Lien invalide."];
+        }
+        $passwordError = $this->passwordError($newPassword);
+        if ($passwordError !== null) {
+            return ['success' => false, 'error' => $passwordError];
+        }
+
+        $stmt = $this->pdo->prepare('SELECT id, email, first_name FROM users WHERE reset_token = :token AND reset_token_expires > NOW()');
+        $stmt->execute(['token' => $token]);
+        $user = $stmt->fetch();
+        if ($user === false) {
+            return ['success' => false, 'error' => "Ce lien de réinitialisation est invalide ou a expiré."];
+        }
+
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare('UPDATE users SET password_hash = :hash, reset_token = NULL, reset_token_expires = NULL WHERE id = :id');
+        $stmt->execute(['hash' => $hash, 'id' => $user['id']]);
+
+        return ['success' => true, 'error' => null, 'user_id' => (int) $user['id'], 'email' => $user['email'], 'first_name' => $user['first_name']];
+    }
+
+    /**
+     * @return array{success:bool, error:?string}
+     */
+    public function changePassword(int $userId, string $currentPassword, string $newPassword): array
+    {
+        $stmt = $this->pdo->prepare('SELECT password_hash FROM users WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch();
+        if ($user === false || !password_verify($currentPassword, $user['password_hash'])) {
+            return ['success' => false, 'error' => "Mot de passe actuel incorrect."];
+        }
+
+        $passwordError = $this->passwordError($newPassword);
+        if ($passwordError !== null) {
+            return ['success' => false, 'error' => $passwordError];
+        }
+
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
+        $stmt->execute(['hash' => $hash, 'id' => $userId]);
+
+        return ['success' => true, 'error' => null];
     }
 
     private function passwordError(string $password): ?string

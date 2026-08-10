@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 require_once __DIR__ . '/../src/logs/logs.php';
+require_once __DIR__ . '/email_helper.php';
 $navActive = 'login';
 
 // Si déjà connecté, direction le dashboard.
@@ -11,13 +12,20 @@ if ($dbError === null && $auth !== null && $auth->isLoggedIn()) {
 }
 
 $loginError = null;
+$loginUnverified = false;
 $registerError = null;
 $registerSuccess = false;
+$resendMessage = null;
 $sessionExpired = ($_GET['expired'] ?? '') === '1';
 $initialTab = ($_GET['tab'] ?? '') === 'register' ? 'register' : 'login';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
     $action = $_POST['action'] ?? '';
+
+    if (in_array($action, ['login', 'register', 'resend_confirmation'], true) && !ds_csrf_verify($_POST['csrf_token'] ?? null)) {
+        $loginError = "Requête invalide ou expirée, merci de réessayer.";
+        $action = '';
+    }
 
     if ($action === 'login') {
         $initialTab = 'login';
@@ -35,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
 
         log_login_failed($email);
         $loginError = $result['error'];
+        $loginUnverified = !empty($result['unverified']);
     }
 
     if ($action === 'register') {
@@ -45,11 +54,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
         $result = $auth->register($email, (string) ($_POST['password'] ?? ''), $first_name, $last_name);
         if ($result['success']) {
             log_profile_created($result['user_id'], $email, $first_name, $last_name);
+            sendConfirmationEmail($email, $first_name, $result['email_token']);
             $registerSuccess = true;
             $initialTab = 'login';
         } else {
             $registerError = $result['error'];
         }
+    }
+
+    if ($action === 'resend_confirmation') {
+        $initialTab = 'login';
+        $email = trim($_POST['resend_email'] ?? '');
+        $resent = $auth->resendEmailToken($email);
+        if ($resent !== null) {
+            sendConfirmationEmail($email, $resent['first_name'], $resent['token']);
+        }
+        $resendMessage = "Si ce compte existe et n'est pas encore vérifié, un nouvel email de confirmation vient d'être envoyé.";
     }
 }
 
@@ -103,7 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
       <?php if ($registerSuccess): ?>
         <div class="auth-notice" style="border-color:var(--ok);background:rgba(52,211,153,0.08);color:var(--ok);margin-top:0;">
           <span class="icon">✅</span>
-          <span>Compte créé avec succès. Vous pouvez maintenant vous connecter ci-dessous.</span>
+          <span>Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.</span>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($resendMessage): ?>
+        <div class="auth-notice" style="margin-top:0;">
+          <span class="icon">✉️</span>
+          <span><?= e($resendMessage) ?></span>
         </div>
       <?php endif; ?>
 
@@ -115,7 +142,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
       <!-- Connexion -->
       <form class="auth-panel" id="panel-login" method="post" action="login.php">
           <input type="hidden" name="action" value="login">
-          <?php if ($loginError): ?><p class="error" style="margin-bottom:10px;"><?= e($loginError) ?></p><?php endif; ?>
+          <input type="hidden" name="csrf_token" value="<?= e(ds_csrf_token()) ?>">
+          <?php if ($loginError): ?>
+            <p class="error" style="margin-bottom:10px;"><?= e($loginError) ?></p>
+            <?php if ($loginUnverified): ?>
+              <form method="post" action="login.php" style="margin-bottom:14px;">
+                  <input type="hidden" name="action" value="resend_confirmation">
+                  <input type="hidden" name="csrf_token" value="<?= e(ds_csrf_token()) ?>">
+                  <input type="hidden" name="resend_email" value="<?= e($_POST['email'] ?? '') ?>">
+                  <button type="submit" class="btn-ghost">Renvoyer l'email de confirmation</button>
+              </form>
+            <?php endif; ?>
+          <?php endif; ?>
           <div class="auth-field">
               <label for="login-email">Adresse e-mail</label>
               <input type="email" id="login-email" name="email" placeholder="prenom.nom@organisme.fr" autocomplete="email" required value="<?= e($_POST['email'] ?? '') ?>">
@@ -123,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
           <div class="auth-field">
               <label for="login-password">Mot de passe</label>
               <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+              <div style="text-align:right;margin-top:6px;"><a href="forgot_password.php" style="font-size:0.85em;">Mot de passe oublié ?</a></div>
           </div>
           <button type="submit" class="auth-submit">Se connecter</button>
       </form>
@@ -130,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
       <!-- Inscription -->
       <form class="auth-panel" id="panel-register" method="post" action="login.php">
           <input type="hidden" name="action" value="register">
+          <input type="hidden" name="csrf_token" value="<?= e(ds_csrf_token()) ?>">
           <?php if ($registerError): ?><p class="error" style="margin-bottom:10px;"><?= e($registerError) ?></p><?php endif; ?>
           <div class="auth-field">
               <label for="reg-first-name">Prénom</label>

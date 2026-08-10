@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
 require_once __DIR__ . '/../src/logs/logs.php';
+require_once __DIR__ . '/email_helper.php';
 $navActive = 'profile';
 
 ds_require_login($auth, $dbError);
@@ -108,6 +109,7 @@ if ($dbError === null) {
                 $stmt = $pdo->prepare('UPDATE users SET password_hash = :hash, updated_at = NOW() WHERE id = :id');
                 $stmt->execute(['hash' => password_hash($new, PASSWORD_DEFAULT), 'id' => $userId]);
                 log_password_changed($userId, $row['email']); // LOGS
+                sendPasswordChangedEmail($row['email'], $currentUser['first_name']);
 
                 ds_flash_set('success', "Votre mot de passe a été modifié.");
                 header('Location: profile.php#securite');
