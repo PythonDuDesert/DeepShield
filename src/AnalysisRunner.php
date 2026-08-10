@@ -114,17 +114,6 @@ final class AnalysisRunner
         fclose($pipes[1]);
         fclose($pipes[2]);
         $exitCode = proc_close($process);
-        file_put_contents(
-            $this->config['root_dir'] . '/storage/debug_runner.txt',
-            date('Y-m-d H:i:s') . PHP_EOL .
-            "EXIT CODE: " . $exitCode . PHP_EOL .
-            "STDOUT:" . PHP_EOL .
-            $stdout . PHP_EOL .
-            "STDERR:" . PHP_EOL .
-            $stderr . PHP_EOL .
-            str_repeat('=', 80) . PHP_EOL,
-            FILE_APPEND
-        );
 
         if (trim($stdout) === '') {
             return $this->errorReport(
