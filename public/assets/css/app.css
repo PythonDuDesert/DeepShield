@@ -356,8 +356,8 @@
 
 .meta-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 16px; }
 .meta-list div { display: flex; justify-content: space-between; border-bottom: 1px dotted rgba(255,255,255,0.08); padding-bottom: 5px; }
-.meta-list dt { color: var(--text-muted); font-size: 0.76em; }
-.meta-list dd { margin: 0; font-family: var(--font-mono); font-size: 0.8em; }
+.meta-list dt { color: var(--text-muted); font-size: 0.9em; }
+.meta-list dd { margin: 0; font-family: var(--font-mono); font-size: 1em; }
 
 .actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
 
