@@ -6,12 +6,6 @@ declare(strict_types=1);
  * ================
  * Unique point d'intégration entre le front PHP et le moteur d'analyse.
  *
- * Aujourd'hui : lance bridge/analyze_bridge.py en sous-processus et lit
- * son JSON sur stdout. Le planning du cahier des charges prévoit une
- * future API FastAPI (phase 5, "À faire") : le jour où elle existera, il
- * suffira de remplacer le contenu de run() par un appel HTTP (curl) vers
- * POST /analyze, sans toucher au reste du front (voir README).
- *
  * Aucune sortie autre que du JSON n'est faite confiance : toute anomalie
  * (process qui plante, timeout, JSON invalide) est remontée comme une
  * erreur explicite plutôt que de faire échouer silencieusement la requête
@@ -50,12 +44,13 @@ final class AnalysisRunner
             $cmd[] = $audioPath;
         }
 
-        $env = [
-            'DEEPSHIELD_MOCK_MODE'       => $this->config['mock_mode'] ? '1' : '0',
-            'DEEPSHIELD_MODEL_CACHE_DIR' => $this->config['model_cache_dir'],
-            'DEEPSHIELD_TEMP_DIR'        => $this->config['temp_dir'],
-            'PATH'                       => getenv('PATH') ?: '/usr/bin:/bin',
-        ];
+        $env = getenv();
+
+        $env['DEEPSHIELD_MODEL_CACHE_DIR'] =
+            $this->config['model_cache_dir'];
+
+        $env['DEEPSHIELD_TEMP_DIR'] =
+            $this->config['temp_dir'];
 
         $descriptorSpec = [
             0 => ['pipe', 'r'],
@@ -94,6 +89,17 @@ final class AnalysisRunner
                 break;
             }
             if (time() - $start > $this->timeoutSeconds) {
+                file_put_contents(
+                    $this->config['root_dir'] . '/storage/debug_runner.txt',
+                    date('Y-m-d H:i:s') . PHP_EOL .
+                    "TIMEOUT" . PHP_EOL .
+                    "STDOUT:" . PHP_EOL .
+                    $stdout . PHP_EOL .
+                    "STDERR:" . PHP_EOL .
+                    $stderr . PHP_EOL .
+                    str_repeat('=', 80) . PHP_EOL,
+                    FILE_APPEND
+                );
                 proc_terminate($process);
                 fclose($pipes[1]);
                 fclose($pipes[2]);
@@ -116,9 +122,31 @@ final class AnalysisRunner
             );
         }
 
-        $decoded = json_decode($stdout, true);
+        $lines = preg_split('/\R/', trim($stdout));
+        $jsonLine = null;
+
+        for ($i = count($lines) - 1; $i >= 0; $i--) {
+            $line = trim($lines[$i]);
+            if ($line !== '' && str_starts_with($line, '{')) {
+                $jsonLine = $line;
+                break;
+            }
+        }
+
+        if ($jsonLine === null) {
+            return $this->errorReport(
+                "Le moteur d'analyse n'a renvoyé aucun objet JSON. " .
+                ($stderr !== '' ? "Détail : " . trim($stderr) : '')
+            );
+        }
+
+        $decoded = json_decode($jsonLine, true);
+
         if (!is_array($decoded)) {
-            return $this->errorReport("Réponse du moteur d'analyse illisible (JSON invalide).");
+            return $this->errorReport(
+                "Réponse du moteur d'analyse illisible (JSON invalide). " .
+                "Erreur JSON : " . json_last_error_msg()
+            );
         }
 
         return $decoded;

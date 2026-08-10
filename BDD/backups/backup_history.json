@@ -28,5 +28,11 @@
         "action": "création manuelle",
         "file": "deepshield_bdd-2026-08-06_16-36-14.sql",
         "details": "Créé par Olivier YAMMINE. Tables: 5, Lignes: 5, Taille: 5.75 KB"
+    },
+    {
+        "timestamp": "2026-08-10 13:19:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260810_131901.sql",
+        "details": "Sauvegarde SQL créée (8.56 KB)."
     }
 ]

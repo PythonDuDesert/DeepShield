@@ -1,0 +1,12 @@
+{
+    "status": "error",
+    "error": "Réponse du moteur d'analyse illisible (JSON invalide). Erreur JSON : Malformed UTF-8 characters, possibly incorrectly encoded",
+    "generated_at": "2026-08-10T10:24:10+00:00",
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "test_video7.mp4",
+        "audio_original_name": "",
+        "kept_for_retraining": false
+    },
+    "id": "fafd68ca-c87a-4621-acc3-912b3072f506"
+}

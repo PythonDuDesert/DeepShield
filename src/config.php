@@ -44,15 +44,32 @@ function ds_env(string $key, $default = null)
     return $env[$key] ?? $default;
 }
 
+function ds_path(string $rootDir, string $path): string
+{
+    $path = trim($path);
+
+    // Chemin absolu Windows : C:\...
+    if (preg_match('/^[A-Za-z]:[\\\\\/]/', $path)) {
+        return $path;
+    }
+
+    // Chemin UNC : \\serveur\...
+    if (str_starts_with($path, '\\\\')) {
+        return $path;
+    }
+
+    // Chemin relatif au projet
+    return $rootDir . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
+}
+
 return [
     'root_dir'          => $rootDir,
     'api_key'           => ds_env('DEEPSHIELD_API_KEY', 'demo-key-change-me'),
     'python_bin'        => ds_env('DEEPSHIELD_PYTHON_BIN', 'python3'),
-    'mock_mode'         => ds_env('DEEPSHIELD_MOCK_MODE', '1') === '1',
     'max_frames'        => (int) ds_env('DEEPSHIELD_MAX_FRAMES', 30),
     'threshold'         => (float) ds_env('DEEPSHIELD_THRESHOLD', 50),
-    'model_cache_dir'   => $rootDir . '/' . ltrim(ds_env('DEEPSHIELD_MODEL_CACHE_DIR', './storage/models'), './'),
-    'temp_dir'          => $rootDir . '/' . ltrim(ds_env('DEEPSHIELD_TEMP_DIR', './storage/tmp'), './'),
+    'model_cache_dir' => ds_path($rootDir, ds_env('DEEPSHIELD_MODEL_CACHE_DIR', './storage/models')),
+    'temp_dir' => ds_path($rootDir, ds_env('DEEPSHIELD_TEMP_DIR', './storage/temp')),
     'upload_dir'        => $rootDir . '/storage/uploads',
     'reports_dir'       => $rootDir . '/storage/reports',
     'bridge_script'     => $rootDir . '/bridge/analyze_bridge.py',
