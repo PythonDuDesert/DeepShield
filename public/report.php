@@ -112,7 +112,7 @@ $global = $report['global'] ?? null;
           <div><dt>Verdict vidéo</dt><dd><span class="badge <?= ds_verdict_class($video['verdict']) ?>"><?= e($video['verdict']) ?></span></dd></div>
           <div><dt>Score « réel »</dt><dd><?= number_format((float) $video['avg_real'], 2) ?>%</dd></div>
           <div><dt>Score « deepfake »</dt><dd><?= number_format((float) $video['avg_fake'], 2) ?>%</dd></div>
-          <div><dt>Frames analysées</dt><dd><?= (int) $video['n_frames_analyzed'] ?> (<?= (int) $video['n_frames_skipped'] ?> ignorée(s))</dd></div>
+          <div><dt>Frames analysées</dt><dd><?= (int) $video['n_frames_analyzed'] ?></dd></div>
         </dl>
 
         <h2 style="font-size:0.95em;margin-top:20px;">Explicabilité — frames les plus suspectes</h2>
@@ -151,10 +151,10 @@ $global = $report['global'] ?? null;
       <?php endif; ?>
 
       <?php if ($audio): ?>
-      <section class="panel">
-        <h2>Modalité audio — <?= e($audio['filename']) ?></h2>
+      <section class="panel" style="margin-left: 18vw; width: 100%;">
+        <h2>Audio analysé : <?= e($audio['filename']) ?></h2>
         <?php if (($audio['status'] ?? '') === 'non_implemente'): ?>
-          <p class="notice">🔧 <?= e($audio['message']) ?></p>
+          <p class="notice"><?= e($audio['message']) ?></p>
         <?php else: ?>
           <pre class="raw-json"><?= e(json_encode($audio, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) ?></pre>
         <?php endif; ?>

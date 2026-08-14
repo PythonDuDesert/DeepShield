@@ -78,7 +78,7 @@ $flash = ds_flash_get();
         </ol>
         <hr class="sep">
         <h2 style="font-size:0.95em;">Formats acceptés</h2>
-        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code> (moteur audio en développement).</p>
+        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code></p>
         <hr class="sep">
         <p class="muted">
           ⚠ Le score produit est une aide à la décision. Il ne remplace jamais un contrôle humain

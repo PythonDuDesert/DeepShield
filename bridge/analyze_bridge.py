@@ -7,10 +7,9 @@ Ce script est le point d'intégration UNIQUE entre le front-end PHP et le
 moteur d'analyse Python (voir cahier des charges, section 4.2 "Moteur
 d'analyse").
 
-L'audio n'est pas encore implémenté (planning : phase 2 "À faire"). Le
-bridge le signale explicitement plutôt que d'échouer silencieusement,
-et le score global se recalcule sur la seule modalité disponible
-(exigence 4.2 : "gérer les cas où une seule modalité est disponible").
+L'audio utilise le modèle neuronal Wav2Vec2 fine-tuné pour la
+détection de parole réelle (bonafide) versus spoof/deepfake. Le score
+principal est une probabilité de REAL comprise entre 0 et 1.
 """
 
 import contextlib
@@ -118,6 +117,38 @@ def real_analyze_video(video_path, max_frames, threshold):
     }
 
 
+def real_analyze_audio(audio_path, threshold):
+    """
+    Real DeepShield audio detector.
+
+    real_probability is the primary score:
+      1.0 = probably REAL / bonafide
+      0.0 = probably DEEPFAKE / spoof
+    """
+    from audio_detector import analyze_audio
+
+    if not os.path.isfile(audio_path):
+        raise FileNotFoundError(f"Fichier audio introuvable : {audio_path}")
+
+    result = analyze_audio(audio_path)
+
+    real_probability = float(result["real_probability"])
+    real_percent = round(real_probability * 100.0, 2)
+
+    return {
+        "real_probability": round(real_probability, 4),
+        "fake_probability": round(1.0 - real_probability, 4),
+        "avg_real": real_percent,
+        "avg_fake": round(100.0 - real_percent, 2),
+        "segments": result.get("segments", []),
+        "n_segments": result.get("n_segments", 0),
+        "duration_seconds": result.get("duration_seconds"),
+        "model": result.get("model"),
+        "device": result.get("device"),
+        "engine": "wav2vec2",
+    }
+
+
 def verdict_from_score(avg_real, threshold):
     margin = 8.0  # zone grise autour du seuil -> verdict "SUSPECT" (exigence 4.3)
     if avg_real >= threshold + margin:
@@ -145,14 +176,13 @@ def build_report(video_path, audio_path, max_frames, threshold):
 
     audio_block = None
     if audio_path:
-        # Pipeline audio non implémenté à ce stade du planning (phase 2 : "À faire").
-        # On le signale explicitement plutôt que d'échouer silencieusement ou
-        # de renvoyer un faux score (exigence 5.3 / 4.2).
+        a = real_analyze_audio(audio_path, threshold)
+        a_verdict = verdict_from_score(a["avg_real"], threshold)
         audio_block = {
             "filename": os.path.basename(audio_path),
-            "status": "non_implemente",
-            "message": "Le moteur audio (librosa + ASVspoof) est en cours de développement."
-                       "Le score global ci-dessous ne repose que sur la modalité vidéo.",
+            "status": "ok",
+            **a,
+            "verdict": a_verdict,
         }
 
     modalities_used = []
@@ -161,7 +191,12 @@ def build_report(video_path, audio_path, max_frames, threshold):
     if audio_block and audio_block.get("status") != "non_implemente":
         modalities_used.append("audio")
 
-    if video_block:
+    if video_block and audio_block:
+        # Fusion des deux modalités sur la même échelle 0-100.
+        # Le score global est toujours un score de REAL.
+        global_score = round((video_block["avg_real"] * 0.6) + (audio_block["avg_real"] * 0.4), 2)
+        global_verdict = verdict_from_score(global_score, threshold)
+    elif video_block:
         global_score = video_block["avg_real"]
         global_verdict = video_block["verdict"]
     else:
