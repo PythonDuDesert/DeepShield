@@ -129,7 +129,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
             <a href="analyser.php" class="btn-primary" style="margin-top:14px;">Lancer votre première analyse</a>
           </div>
         <?php else: ?>
-          <table class="table">
+          <table class="table" style="font-size: medium;">
             <thead><tr><th>Date</th><th>Fichier</th><th>Verdict</th><th></th></tr></thead>
             <tbody>
               <?php foreach ($recent as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>

@@ -52,6 +52,9 @@ final class AnalysisRunner
         $env['DEEPSHIELD_TEMP_DIR'] =
             $this->config['temp_dir'];
 
+        $env['DEEPSHIELD_AUDIO_MODEL'] =
+            $this->config['audio_model'];
+
         $descriptorSpec = [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],

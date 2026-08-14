@@ -32,7 +32,7 @@ from transformers import AutoFeatureExtractor, AutoModelForAudioClassification
 
 MODEL_ID = os.environ.get(
     "DEEPSHIELD_AUDIO_MODEL",
-    "Vansh180/deepfake-audio-wav2vec2",
+    "Gustking/wav2vec2-large-xlsr-deepfake-audio-classification",
 )
 MODEL_CACHE_DIR = os.environ.get(
     "DEEPSHIELD_AUDIO_MODEL_CACHE",
@@ -82,13 +82,6 @@ def _load_model():
         return _model, _processor, _device
 
     _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    print(f"[audio_detector] Chargement {MODEL_ID} sur {_device}...", flush=True)
-    print(
-        f"[AUDIO] ===== DeepShield Audio Detector V1 =====",
-        file=sys.stderr,
-        flush=True,
-    )
     print(
         f"[AUDIO] Model      : {MODEL_ID}",
         file=sys.stderr,

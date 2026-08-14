@@ -59,7 +59,7 @@ $global = $report['global'] ?? null;
   <main class="app-main">
   <div class="app-page-head">
       <h1>Rapport d'analyse</h1>
-      <p><a class="btn-ghost" href="historique.php">← Retour à l'historique</a></p>
+      <p><br><a class="btn-ghost" href="historique.php">← Retour à l'historique</a></p>
   </div>
 
   <div class="dash-grid">
@@ -67,14 +67,10 @@ $global = $report['global'] ?? null;
       <section class="panel" style="grid-column: 1 / -1;">
         <h2>Échec de l'analyse</h2>
         <p class="error"><?= e($report['error'] ?? 'Erreur inconnue.') ?></p>
-        <p class="muted" style="margin-top:10px;">
-          Conformément à l'exigence « jamais d'échec silencieux », l'erreur exacte du moteur
-          d'analyse est affichée ci-dessus plutôt que masquée.
-        </p>
         <a class="btn-primary" style="margin-top:18px;" href="dashboard.php">Réessayer</a>
       </section>
     <?php else: ?>
-      <section class="panel" style="grid-column: 1 / -1;">
+      <section class="panel" style="grid-column: 1 / -1; margin-left: 18vw; width: 54%;">
         <div class="verdict-header">
           <div>
             <h2>Verdict global</h2>
@@ -95,8 +91,6 @@ $global = $report['global'] ?? null;
         <dl class="meta-list">
           <div><dt>Généré le</dt><dd><?= e(str_replace('T', ' ', substr($report['generated_at'] ?? '', 0, 19))) ?> UTC</dd></div>
           <div><dt>Temps de traitement</dt><dd><?= e((string) ($report['elapsed_seconds'] ?? '—')) ?> s</dd></div>
-          <div><dt>Moteur</dt><dd><?= e($report['params']['engine'] ?? '—') ?><?= ($report['params']['engine'] ?? '') === 'mock' ? ' (démonstration)' : '' ?></dd></div>
-          <div><dt>Seuil de décision</dt><dd><?= e((string) ($report['params']['threshold'] ?? '—')) ?>%</dd></div>
         </dl>
 
         <div class="actions">
@@ -106,8 +100,8 @@ $global = $report['global'] ?? null;
       </section>
 
       <?php if ($video): ?>
-      <section class="panel">
-        <h2>Modalité vidéo — <?= e($video['filename']) ?></h2>
+      <section class="panel" style="margin-left: 18vw; width: 100%;">
+        <h2>Vidéo analysée : <?= e($video['filename']) ?></h2>
         <dl class="meta-list">
           <div><dt>Verdict vidéo</dt><dd><span class="badge <?= ds_verdict_class($video['verdict']) ?>"><?= e($video['verdict']) ?></span></dd></div>
           <div><dt>Score « réel »</dt><dd><?= number_format((float) $video['avg_real'], 2) ?>%</dd></div>

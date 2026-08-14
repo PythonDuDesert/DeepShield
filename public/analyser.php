@@ -37,17 +37,13 @@ $flash = ds_flash_get();
     <div class="dash-grid">
       <section class="panel">
         <h2>Fichiers à analyser</h2>
-        <p class="muted">
-          Le service fonctionne avec une seule modalité si nécessaire — le score global s'adapte
-          en conséquence.
-        </p>
         <form method="post" action="analyze.php" enctype="multipart/form-data" id="analyze-form">
           <div class="dropzone" id="dropzone-video">
-            <label for="video_file"><strong>Vidéo</strong> (.mp4, .mov) — optionnelle</label>
+            <label for="video_file"><strong>Vidéo</strong> (.mp4, .mov)</label>
             <input type="file" id="video_file" name="video_file" accept=".mp4,.mov">
           </div>
           <div class="dropzone" id="dropzone-audio">
-            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3) — optionnel, moteur en développement</label>
+            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3)</label>
             <input type="file" id="audio_file" name="audio_file" accept=".wav,.mp3">
           </div>
 

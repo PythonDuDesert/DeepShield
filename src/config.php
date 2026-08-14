@@ -76,6 +76,7 @@ return [
     'max_upload_bytes'  => (int) ds_env('DEEPSHIELD_MAX_UPLOAD_BYTES', 209715200),
     'video_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_VIDEO_EXT', 'mp4,mov'))),
     'audio_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_AUDIO_EXT', 'wav,mp3'))),
+    'audio_model' => 'Gustking/wav2vec2-large-xlsr-deepfake-audio-classification',
     'auto_delete_uploads' => ds_env('DEEPSHIELD_AUTO_DELETE_UPLOADS', '1') === '1',
     'session_idle_timeout' => (int) ds_env('SESSION_IDLE_TIMEOUT', 900),
     'db_host' => ds_env('DB_HOST', '127.0.0.1'),

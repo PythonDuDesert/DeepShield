@@ -142,7 +142,7 @@ if ($dbError === null) {
       <?php if (empty($users)): ?>
         <div class="empty-state"><p>Aucun compte enregistré.</p></div>
       <?php else: ?>
-        <table class="table">
+        <table class="table" style="font-size: medium;">
           <thead>
             <tr>
               <th>Compte</th><th>Rôle</th><th>Statut</th><th>Échecs</th><th>Dernière connexion</th><th>Actions</th>
