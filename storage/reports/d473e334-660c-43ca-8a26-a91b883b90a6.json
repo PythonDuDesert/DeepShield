@@ -1,0 +1,91 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-14T19:23:21.856109+00:00",
+    "elapsed_seconds": 46.06,
+    "params": {
+        "max_frames": 30,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": null,
+    "audio": {
+        "filename": "nova_0.wav",
+        "status": "ok",
+        "real_probability": 0.0967,
+        "fake_probability": 0.9033,
+        "avg_real": 9.67,
+        "avg_fake": 90.33,
+        "segments": [
+            {
+                "index": 0,
+                "start_seconds": 0,
+                "end_seconds": 1,
+                "real_probability": 0.0857,
+                "fake_probability": 0.9143
+            },
+            {
+                "index": 1,
+                "start_seconds": 0.5,
+                "end_seconds": 1.5,
+                "real_probability": 0.0914,
+                "fake_probability": 0.9086
+            },
+            {
+                "index": 2,
+                "start_seconds": 1,
+                "end_seconds": 2,
+                "real_probability": 0.0971,
+                "fake_probability": 0.9029
+            },
+            {
+                "index": 3,
+                "start_seconds": 1.5,
+                "end_seconds": 2.5,
+                "real_probability": 0.0945,
+                "fake_probability": 0.9055
+            },
+            {
+                "index": 4,
+                "start_seconds": 2,
+                "end_seconds": 3,
+                "real_probability": 0.0897,
+                "fake_probability": 0.9103
+            },
+            {
+                "index": 5,
+                "start_seconds": 2.5,
+                "end_seconds": 3.5,
+                "real_probability": 0.0924,
+                "fake_probability": 0.9076
+            },
+            {
+                "index": 6,
+                "start_seconds": 3,
+                "end_seconds": 3.768,
+                "real_probability": 0.1263,
+                "fake_probability": 0.8737
+            }
+        ],
+        "n_segments": 7,
+        "duration_seconds": 3.768,
+        "model": "Gustking/wav2vec2-large-xlsr-deepfake-audio-classification",
+        "device": "cuda",
+        "engine": "wav2vec2",
+        "verdict": "DEEPFAKE"
+    },
+    "global": {
+        "verdict": "INDÉTERMINÉ",
+        "confidence_real_percent": null,
+        "modalities_used": [
+            "audio"
+        ]
+    },
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "nova_0.wav",
+        "kept_for_retraining": false
+    },
+    "id": "d473e334-660c-43ca-8a26-a91b883b90a6"
+}

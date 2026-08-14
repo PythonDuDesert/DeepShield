@@ -1,0 +1,217 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-14T19:50:09.335828+00:00",
+    "elapsed_seconds": 6.15,
+    "params": {
+        "max_frames": 30,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": null,
+    "audio": {
+        "filename": "908_31957_000003_000001.wav",
+        "status": "ok",
+        "real_probability": 0.6163,
+        "fake_probability": 0.3837,
+        "avg_real": 61.63,
+        "avg_fake": 38.37,
+        "segments": [
+            {
+                "index": 0,
+                "start_seconds": 0,
+                "end_seconds": 1,
+                "real_probability": 0.1056,
+                "fake_probability": 0.8944
+            },
+            {
+                "index": 1,
+                "start_seconds": 0.5,
+                "end_seconds": 1.5,
+                "real_probability": 0.6307,
+                "fake_probability": 0.3693
+            },
+            {
+                "index": 2,
+                "start_seconds": 1,
+                "end_seconds": 2,
+                "real_probability": 0.5946,
+                "fake_probability": 0.4054
+            },
+            {
+                "index": 3,
+                "start_seconds": 1.5,
+                "end_seconds": 2.5,
+                "real_probability": 0.8678,
+                "fake_probability": 0.1322
+            },
+            {
+                "index": 4,
+                "start_seconds": 2,
+                "end_seconds": 3,
+                "real_probability": 0.7198,
+                "fake_probability": 0.2802
+            },
+            {
+                "index": 5,
+                "start_seconds": 2.5,
+                "end_seconds": 3.5,
+                "real_probability": 0.6802,
+                "fake_probability": 0.3198
+            },
+            {
+                "index": 6,
+                "start_seconds": 3,
+                "end_seconds": 4,
+                "real_probability": 0.2056,
+                "fake_probability": 0.7944
+            },
+            {
+                "index": 7,
+                "start_seconds": 3.5,
+                "end_seconds": 4.5,
+                "real_probability": 0.2627,
+                "fake_probability": 0.7373
+            },
+            {
+                "index": 8,
+                "start_seconds": 4,
+                "end_seconds": 5,
+                "real_probability": 0.559,
+                "fake_probability": 0.441
+            },
+            {
+                "index": 9,
+                "start_seconds": 4.5,
+                "end_seconds": 5.5,
+                "real_probability": 0.877,
+                "fake_probability": 0.123
+            },
+            {
+                "index": 10,
+                "start_seconds": 5,
+                "end_seconds": 6,
+                "real_probability": 0.6901,
+                "fake_probability": 0.3099
+            },
+            {
+                "index": 11,
+                "start_seconds": 5.5,
+                "end_seconds": 6.5,
+                "real_probability": 0.9004,
+                "fake_probability": 0.0996
+            },
+            {
+                "index": 12,
+                "start_seconds": 6,
+                "end_seconds": 7,
+                "real_probability": 0.8856,
+                "fake_probability": 0.1144
+            },
+            {
+                "index": 13,
+                "start_seconds": 6.5,
+                "end_seconds": 7.5,
+                "real_probability": 0.7123,
+                "fake_probability": 0.2877
+            },
+            {
+                "index": 14,
+                "start_seconds": 7,
+                "end_seconds": 8,
+                "real_probability": 0.6221,
+                "fake_probability": 0.3779
+            },
+            {
+                "index": 15,
+                "start_seconds": 7.5,
+                "end_seconds": 8.5,
+                "real_probability": 0.8209,
+                "fake_probability": 0.1791
+            },
+            {
+                "index": 16,
+                "start_seconds": 8,
+                "end_seconds": 9,
+                "real_probability": 0.7016,
+                "fake_probability": 0.2984
+            },
+            {
+                "index": 17,
+                "start_seconds": 8.5,
+                "end_seconds": 9.5,
+                "real_probability": 0.6373,
+                "fake_probability": 0.3627
+            },
+            {
+                "index": 18,
+                "start_seconds": 9,
+                "end_seconds": 10,
+                "real_probability": 0.8111,
+                "fake_probability": 0.1889
+            },
+            {
+                "index": 19,
+                "start_seconds": 9.5,
+                "end_seconds": 10.5,
+                "real_probability": 0.3412,
+                "fake_probability": 0.6588
+            },
+            {
+                "index": 20,
+                "start_seconds": 10,
+                "end_seconds": 11,
+                "real_probability": 0.7557,
+                "fake_probability": 0.2443
+            },
+            {
+                "index": 21,
+                "start_seconds": 10.5,
+                "end_seconds": 11.5,
+                "real_probability": 0.8158,
+                "fake_probability": 0.1842
+            },
+            {
+                "index": 22,
+                "start_seconds": 11,
+                "end_seconds": 12,
+                "real_probability": 0.3538,
+                "fake_probability": 0.6462
+            },
+            {
+                "index": 23,
+                "start_seconds": 11.5,
+                "end_seconds": 12.5,
+                "real_probability": 0.7096,
+                "fake_probability": 0.2904
+            },
+            {
+                "index": 24,
+                "start_seconds": 12,
+                "end_seconds": 12.91,
+                "real_probability": 0.146,
+                "fake_probability": 0.854
+            }
+        ],
+        "n_segments": 25,
+        "duration_seconds": 12.91,
+        "model": "Gustking/wav2vec2-large-xlsr-deepfake-audio-classification",
+        "device": "cuda",
+        "engine": "wav2vec2",
+        "verdict": "RÉEL"
+    },
+    "global": {
+        "verdict": "RÉEL",
+        "confidence_real_percent": 61.63,
+        "modalities_used": [
+            "audio"
+        ]
+    },
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "908_31957_000003_000001.wav",
+        "kept_for_retraining": false
+    },
+    "id": "3cda5f2c-af52-4126-aafa-356c7d891eb3"
+}

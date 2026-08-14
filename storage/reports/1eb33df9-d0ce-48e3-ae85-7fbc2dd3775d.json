@@ -1,0 +1,238 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-14T17:19:01.169611+00:00",
+    "elapsed_seconds": 5.46,
+    "params": {
+        "max_frames": 30,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": null,
+    "audio": {
+        "filename": "61.valle_.wav",
+        "status": "ok",
+        "real_probability": 0.8994,
+        "fake_probability": 0.1006,
+        "avg_real": 89.94,
+        "avg_fake": 10.06,
+        "segments": [
+            {
+                "index": 0,
+                "start_seconds": 0,
+                "end_seconds": 1,
+                "real_probability": 0.6799,
+                "fake_probability": 0.3201
+            },
+            {
+                "index": 1,
+                "start_seconds": 0.5,
+                "end_seconds": 1.5,
+                "real_probability": 0.9344,
+                "fake_probability": 0.0656
+            },
+            {
+                "index": 2,
+                "start_seconds": 1,
+                "end_seconds": 2,
+                "real_probability": 0.9244,
+                "fake_probability": 0.0756
+            },
+            {
+                "index": 3,
+                "start_seconds": 1.5,
+                "end_seconds": 2.5,
+                "real_probability": 0.7553,
+                "fake_probability": 0.2447
+            },
+            {
+                "index": 4,
+                "start_seconds": 2,
+                "end_seconds": 3,
+                "real_probability": 0.8281,
+                "fake_probability": 0.1719
+            },
+            {
+                "index": 5,
+                "start_seconds": 2.5,
+                "end_seconds": 3.5,
+                "real_probability": 0.9318,
+                "fake_probability": 0.0682
+            },
+            {
+                "index": 6,
+                "start_seconds": 3,
+                "end_seconds": 4,
+                "real_probability": 0.9305,
+                "fake_probability": 0.0695
+            },
+            {
+                "index": 7,
+                "start_seconds": 3.5,
+                "end_seconds": 4.5,
+                "real_probability": 0.9242,
+                "fake_probability": 0.0758
+            },
+            {
+                "index": 8,
+                "start_seconds": 4,
+                "end_seconds": 5,
+                "real_probability": 0.9127,
+                "fake_probability": 0.0873
+            },
+            {
+                "index": 9,
+                "start_seconds": 4.5,
+                "end_seconds": 5.5,
+                "real_probability": 0.8974,
+                "fake_probability": 0.1026
+            },
+            {
+                "index": 10,
+                "start_seconds": 5,
+                "end_seconds": 6,
+                "real_probability": 0.9255,
+                "fake_probability": 0.0745
+            },
+            {
+                "index": 11,
+                "start_seconds": 5.5,
+                "end_seconds": 6.5,
+                "real_probability": 0.9323,
+                "fake_probability": 0.0677
+            },
+            {
+                "index": 12,
+                "start_seconds": 6,
+                "end_seconds": 7,
+                "real_probability": 0.9184,
+                "fake_probability": 0.0816
+            },
+            {
+                "index": 13,
+                "start_seconds": 6.5,
+                "end_seconds": 7.5,
+                "real_probability": 0.8845,
+                "fake_probability": 0.1155
+            },
+            {
+                "index": 14,
+                "start_seconds": 7,
+                "end_seconds": 8,
+                "real_probability": 0.9253,
+                "fake_probability": 0.0747
+            },
+            {
+                "index": 15,
+                "start_seconds": 7.5,
+                "end_seconds": 8.5,
+                "real_probability": 0.927,
+                "fake_probability": 0.073
+            },
+            {
+                "index": 16,
+                "start_seconds": 8,
+                "end_seconds": 9,
+                "real_probability": 0.934,
+                "fake_probability": 0.066
+            },
+            {
+                "index": 17,
+                "start_seconds": 8.5,
+                "end_seconds": 9.5,
+                "real_probability": 0.9262,
+                "fake_probability": 0.0738
+            },
+            {
+                "index": 18,
+                "start_seconds": 9,
+                "end_seconds": 10,
+                "real_probability": 0.9356,
+                "fake_probability": 0.0644
+            },
+            {
+                "index": 19,
+                "start_seconds": 9.5,
+                "end_seconds": 10.5,
+                "real_probability": 0.8527,
+                "fake_probability": 0.1473
+            },
+            {
+                "index": 20,
+                "start_seconds": 10,
+                "end_seconds": 11,
+                "real_probability": 0.9142,
+                "fake_probability": 0.0858
+            },
+            {
+                "index": 21,
+                "start_seconds": 10.5,
+                "end_seconds": 11.5,
+                "real_probability": 0.9357,
+                "fake_probability": 0.0643
+            },
+            {
+                "index": 22,
+                "start_seconds": 11,
+                "end_seconds": 12,
+                "real_probability": 0.9168,
+                "fake_probability": 0.0832
+            },
+            {
+                "index": 23,
+                "start_seconds": 11.5,
+                "end_seconds": 12.5,
+                "real_probability": 0.9144,
+                "fake_probability": 0.0856
+            },
+            {
+                "index": 24,
+                "start_seconds": 12,
+                "end_seconds": 13,
+                "real_probability": 0.9141,
+                "fake_probability": 0.0859
+            },
+            {
+                "index": 25,
+                "start_seconds": 12.5,
+                "end_seconds": 13.5,
+                "real_probability": 0.8719,
+                "fake_probability": 0.1281
+            },
+            {
+                "index": 26,
+                "start_seconds": 13,
+                "end_seconds": 14,
+                "real_probability": 0.9164,
+                "fake_probability": 0.0836
+            },
+            {
+                "index": 27,
+                "start_seconds": 13.5,
+                "end_seconds": 14.167,
+                "real_probability": 0.9201,
+                "fake_probability": 0.0799
+            }
+        ],
+        "n_segments": 28,
+        "duration_seconds": 14.167,
+        "model": "Vansh180/deepfake-audio-wav2vec2",
+        "device": "cuda",
+        "engine": "wav2vec2",
+        "verdict": "RÉEL"
+    },
+    "global": {
+        "verdict": "INDÉTERMINÉ",
+        "confidence_real_percent": null,
+        "modalities_used": [
+            "audio"
+        ]
+    },
+    "user_id": 2,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "61.valle_.wav",
+        "kept_for_retraining": false
+    },
+    "id": "1eb33df9-d0ce-48e3-ae85-7fbc2dd3775d"
+}
