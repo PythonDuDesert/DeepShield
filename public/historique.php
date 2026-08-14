@@ -54,7 +54,7 @@ if ($dbError === null) {
       </div>
     </div>
 
-    <section class="panel">
+    <div class="panel">
       <?php if (empty($all)): ?>
         <div class="empty-state">
           <img src="assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
@@ -62,7 +62,7 @@ if ($dbError === null) {
           <a href="analyser.php" class="btn-primary" style="margin-top:14px;">Lancer une analyse</a>
         </div>
       <?php else: ?>
-        <table class="table">
+        <table class="table" style="font-size: medium;">
           <thead><tr><th>Date</th><th>Fichier</th><th>Taille</th><th>Verdict</th><th></th></tr></thead>
           <tbody>
             <?php foreach ($all as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>
@@ -77,7 +77,7 @@ if ($dbError === null) {
           </tbody>
         </table>
       <?php endif; ?>
-    </section>
+      </div>
 
     <?php endif; ?>
   </main>

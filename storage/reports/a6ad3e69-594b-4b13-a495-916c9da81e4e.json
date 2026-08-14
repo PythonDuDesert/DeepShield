@@ -1,0 +1,12 @@
+{
+    "status": "error",
+    "error": "name 'librosa' is not defined",
+    "generated_at": "2026-08-14T13:07:32.766804+00:00",
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "51.mp3",
+        "kept_for_retraining": false
+    },
+    "id": "a6ad3e69-594b-4b13-a495-916c9da81e4e"
+}

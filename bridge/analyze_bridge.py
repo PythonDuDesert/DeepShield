@@ -7,11 +7,9 @@ Ce script est le point d'intégration UNIQUE entre le front-end PHP et le
 moteur d'analyse Python (voir cahier des charges, section 4.2 "Moteur
 d'analyse").
 
-L'audio dispose désormais d'un mode simulation (comme la vidéo) et d'un
-mode réel basé sur des descripteurs spectraux (librosa) : variance des
-MFCC, platitude spectrale et taux de passage par zéro. C'est une base
-heuristique explicable en attendant un modèle entraîné sur ASVspoof
-(exigence 4.2 : "gérer les cas où une seule modalité est disponible").
+L'audio utilise le modèle neuronal Wav2Vec2 fine-tuné pour la
+détection de parole réelle (bonafide) versus spoof/deepfake. Le score
+principal est une probabilité de REAL comprise entre 0 et 1.
 """
 
 import contextlib
@@ -120,81 +118,36 @@ def real_analyze_video(video_path, max_frames, threshold):
     }
 
 
-def mock_analyze_audio(audio_path, threshold):
-    """
-    Simulation déterministe pour l'audio, même logique que
-    mock_analyze_video : le résultat dépend du hash du nom de fichier,
-    pas d'un tirage aléatoire (exigence 9 : "même entrée -> même sortie").
-    """
-    if not os.path.isfile(audio_path):
-        raise FileNotFoundError(f"Fichier audio introuvable : {audio_path}")
-
-    seed = int(hashlib.sha256(("audio::" + os.path.basename(audio_path)).encode("utf-8")).hexdigest(), 16)
-    is_fake_like = (seed % 2 == 0)
-    base_score = 24.0 if is_fake_like else 76.0
-    jitter = (seed % 1600) / 100.0 - 8.0  # +/-8
-    score_real = max(0.0, min(100.0, base_score + jitter))
-
-    time.sleep(0.2)  # simule un temps de traitement perceptible pour la démo UX
-
-    return {
-        "avg_real": round(score_real, 2),
-        "avg_fake": round(100.0 - score_real, 2),
-        "features": {
-            "mfcc_variance": round((seed % 500) / 100.0, 2),
-            "spectral_flatness": round((seed % 100) / 100.0, 3),
-            "zero_crossing_rate": round((seed % 300) / 1000.0, 3),
-        },
-        "engine": "mock",
-    }
-
-
 def real_analyze_audio(audio_path, threshold):
     """
-    Mode réel : extraction de descripteurs spectraux via librosa, puis
-    un score heuristique explicable (pas de réseau de neurones entraîné
-    à ce stade — voir cahier des charges, planning phase 2). L'audio
-    synthétique tend à présenter une platitude spectrale plus élevée et
-    une variance de MFCC plus faible que la voix naturelle ; ce n'est
-    qu'une base de référence, à remplacer par un modèle ASVspoof entraîné
-    dès qu'il sera disponible, sans changer l'interface de cette fonction.
+    Real DeepShield audio detector.
+
+    real_probability is the primary score:
+      1.0 = probably REAL / bonafide
+      0.0 = probably DEEPFAKE / spoof
     """
-    import numpy as np
-    import librosa  # noqa: WPS433 (import local volontaire : évite la dépendance en mode mock)
+    from audio_detector import analyze_audio
 
     if not os.path.isfile(audio_path):
         raise FileNotFoundError(f"Fichier audio introuvable : {audio_path}")
 
-    y, sr = librosa.load(audio_path, sr=None, mono=True)
-    if y.size == 0:
-        raise RuntimeError("Fichier audio vide ou illisible.")
+    result = analyze_audio(audio_path)
 
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=20)
-    mfcc_variance = float(np.mean(np.var(mfcc, axis=1)))
-
-    flatness = float(np.mean(librosa.feature.spectral_flatness(y=y)))
-    zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))
-
-    # Score heuristique 0-100 (0 = probablement synthétique, 100 = probablement réel).
-    # Normalisation empirique : variance MFCC élevée + platitude spectrale basse
-    # => voix naturelle. Bornes calibrées sur des échantillons de parole courants,
-    # à ajuster une fois qu'un vrai jeu de données ASVspoof est disponible.
-    variance_component = max(0.0, min(1.0, mfcc_variance / 400.0))
-    flatness_component = max(0.0, min(1.0, 1.0 - (flatness / 0.35)))
-    score_real = round(((variance_component * 0.6) + (flatness_component * 0.4)) * 100.0, 2)
+    real_probability = float(result["real_probability"])
+    real_percent = round(real_probability * 100.0, 2)
 
     return {
-        "avg_real": score_real,
-        "avg_fake": round(100.0 - score_real, 2),
-        "features": {
-            "mfcc_variance": round(mfcc_variance, 2),
-            "spectral_flatness": round(flatness, 3),
-            "zero_crossing_rate": round(zcr, 3),
-        },
-        "engine": "real",
-        "engine_note": "Score heuristique (descripteurs spectraux), pas encore un modèle ASVspoof entraîné.",
+        "real_probability": round(real_probability, 4),
+        "fake_probability": round(1.0 - real_probability, 4),
+        "avg_real": real_percent,
+        "avg_fake": round(100.0 - real_percent, 2),
+        "segments": result.get("segments", []),
+        "n_segments": result.get("n_segments", 0),
+        "duration_seconds": result.get("duration_seconds"),
+        "model": result.get("model"),
+        "device": result.get("device"),
+        "engine": "wav2vec2",
     }
-
 
 
 def verdict_from_score(avg_real, threshold):
@@ -224,14 +177,13 @@ def build_report(video_path, audio_path, max_frames, threshold):
 
     audio_block = None
     if audio_path:
-        audio_engine_fn = mock_analyze_audio if MOCK_MODE else real_analyze_audio
-        a = audio_engine_fn(audio_path, threshold)
+        a = real_analyze_audio(audio_path, threshold)
         a_verdict = verdict_from_score(a["avg_real"], threshold)
         audio_block = {
             "filename": os.path.basename(audio_path),
-            "status": "non_implemente",
-            "message": "Le moteur audio (librosa + ASVspoof) est en cours de développement."
-                       "Le score global ci-dessous ne repose que sur la modalité vidéo.",
+            "status": "ok",
+            **a,
+            "verdict": a_verdict,
         }
 
     modalities_used = []
@@ -241,17 +193,25 @@ def build_report(video_path, audio_path, max_frames, threshold):
         modalities_used.append("audio")
 
     if video_block and audio_block:
-        # Pondération simple : la vidéo (analyse multi-frames) pèse un peu plus
-        # que l'audio (mode heuristique) tant que ce dernier n'est pas un modèle
-        # entraîné (exigence 4.2 : gérer plusieurs modalités disponibles).
-        global_score = round((video_block["avg_real"] * 0.6) + (audio_block["avg_real"] * 0.4), 2)
+        # Fusion des deux modalités sur la même échelle 0-100.
+        # Le score global est toujours un score de REAL.
+        global_score = round(
+            (video_block["avg_real"] * 0.6)
+            + (audio_block["avg_real"] * 0.4),
+            2
+        )
         global_verdict = verdict_from_score(global_score, threshold)
+
     elif video_block:
+        # Vidéo seule
         global_score = video_block["avg_real"]
         global_verdict = video_block["verdict"]
+
     elif audio_block:
+        # Audio seul
         global_score = audio_block["avg_real"]
         global_verdict = audio_block["verdict"]
+
     else:
         global_score = None
         global_verdict = "INDÉTERMINÉ"

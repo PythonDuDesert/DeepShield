@@ -1,0 +1,112 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-14T14:09:53.778329+00:00",
+    "elapsed_seconds": 5.32,
+    "params": {
+        "max_frames": 30,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": null,
+    "audio": {
+        "filename": "51.mp3",
+        "status": "ok",
+        "real_probability": 0.837,
+        "fake_probability": 0.163,
+        "avg_real": 83.7,
+        "avg_fake": 16.3,
+        "segments": [
+            {
+                "index": 0,
+                "start_seconds": 0,
+                "end_seconds": 1,
+                "real_probability": 0.8821,
+                "fake_probability": 0.1179
+            },
+            {
+                "index": 1,
+                "start_seconds": 0.5,
+                "end_seconds": 1.5,
+                "real_probability": 0.8975,
+                "fake_probability": 0.1025
+            },
+            {
+                "index": 2,
+                "start_seconds": 1,
+                "end_seconds": 2,
+                "real_probability": 0.9083,
+                "fake_probability": 0.0917
+            },
+            {
+                "index": 3,
+                "start_seconds": 1.5,
+                "end_seconds": 2.5,
+                "real_probability": 0.8514,
+                "fake_probability": 0.1486
+            },
+            {
+                "index": 4,
+                "start_seconds": 2,
+                "end_seconds": 3,
+                "real_probability": 0.5055,
+                "fake_probability": 0.4945
+            },
+            {
+                "index": 5,
+                "start_seconds": 2.5,
+                "end_seconds": 3.5,
+                "real_probability": 0.8578,
+                "fake_probability": 0.1422
+            },
+            {
+                "index": 6,
+                "start_seconds": 3,
+                "end_seconds": 4,
+                "real_probability": 0.8364,
+                "fake_probability": 0.1636
+            },
+            {
+                "index": 7,
+                "start_seconds": 3.5,
+                "end_seconds": 4.5,
+                "real_probability": 0.9141,
+                "fake_probability": 0.0859
+            },
+            {
+                "index": 8,
+                "start_seconds": 4,
+                "end_seconds": 5,
+                "real_probability": 0.8313,
+                "fake_probability": 0.1687
+            },
+            {
+                "index": 9,
+                "start_seconds": 4.5,
+                "end_seconds": 5.44,
+                "real_probability": 0.8857,
+                "fake_probability": 0.1143
+            }
+        ],
+        "n_segments": 10,
+        "duration_seconds": 5.44,
+        "model": "Vansh180/deepfake-audio-wav2vec2",
+        "device": "cuda",
+        "engine": "wav2vec2",
+        "verdict": "RÉEL"
+    },
+    "global": {
+        "verdict": "RÉEL",
+        "confidence_real_percent": 83.7,
+        "modalities_used": [
+            "audio"
+        ]
+    },
+    "user_id": 2,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "51.mp3",
+        "kept_for_retraining": false
+    },
+    "id": "d8f549f5-73c9-4f35-8332-1ea498f14a3c"
+}

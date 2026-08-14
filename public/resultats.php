@@ -120,7 +120,7 @@ function ds_pct(int $part, int $total): float
         <?php if (empty($recent)): ?>
           <div class="empty-state"><p>Aucune analyse ne correspond à ce filtre.</p></div>
         <?php else: ?>
-          <table class="table">
+          <table class="table" style="font-size: medium;">
             <thead><tr><th>Date</th><th>Compte</th><th>Fichier</th><th>Verdict</th></tr></thead>
             <tbody>
               <?php foreach ($recent as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>

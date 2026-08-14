@@ -59,7 +59,7 @@ $global = $report['global'] ?? null;
   <main class="app-main">
   <div class="app-page-head">
       <h1>Rapport d'analyse</h1>
-      <br><p><a class="btn-ghost" href="historique.php">← Retour à l'historique</a></p>
+      <p><br><a class="btn-ghost" href="historique.php">← Retour à l'historique</a></p>
   </div>
 
   <div class="dash-grid">
@@ -67,7 +67,7 @@ $global = $report['global'] ?? null;
       <section class="panel" style="grid-column: 1 / -1;">
         <h2>Échec de l'analyse</h2>
         <p class="error"><?= e($report['error'] ?? 'Erreur inconnue.') ?></p>
-        <a class="btn-primary" style="margin-top:18px;" href="analyser.php">Réessayer</a>
+        <a class="btn-primary" style="margin-top:18px;" href="dashboard.php">Réessayer</a>
       </section>
     <?php else: ?>
       <section class="panel" style="grid-column: 1 / -1; margin-left: 18vw; width: 54%;">
@@ -101,15 +101,15 @@ $global = $report['global'] ?? null;
 
       <?php if ($video): ?>
       <section class="panel" style="margin-left: 18vw; width: 100%;">
-        <h2>Modalité vidéo — <?= e($video['filename']) ?></h2>
-        <dl class="meta-list">
+        <h2>Vidéo analysée : <?= e($video['filename']) ?></h2>
+        <dl class="meta-list" style="font-size:1.2em;">
           <div><dt>Verdict vidéo</dt><dd><span class="badge <?= ds_verdict_class($video['verdict']) ?>"><?= e($video['verdict']) ?></span></dd></div>
           <div><dt>Score « réel »</dt><dd><?= number_format((float) $video['avg_real'], 2) ?>%</dd></div>
           <div><dt>Score « deepfake »</dt><dd><?= number_format((float) $video['avg_fake'], 2) ?>%</dd></div>
-          <div><dt>Frames analysées</dt><dd><?= (int) $video['n_frames_analyzed'] ?> (<?= (int) $video['n_frames_skipped'] ?> ignorée(s))</dd></div>
+          <div><dt>Frames analysées</dt><dd><?= (int) $video['n_frames_analyzed'] ?></dd></div>
         </dl>
 
-        <h2 style="font-size:0.95em;margin-top:20px;">Explicabilité — frames les plus suspectes</h2>
+        <h2 style="font-size:1em; margin-top:20px;">Détails</h2>
         <p class="muted">Les frames au score « réel » le plus bas, celles qui font le plus pencher le verdict.</p>
         <table class="table">
           <thead><tr><th>Frame</th><th>Réel</th><th>Deepfake</th><th></th></tr></thead>
@@ -145,10 +145,15 @@ $global = $report['global'] ?? null;
       <?php endif; ?>
 
       <?php if ($audio): ?>
-      <section class="panel">
-        <h2>Modalité audio — <?= e($audio['filename']) ?></h2>
+      <section class="panel" style="margin-left: 18vw; width: 88%;">
+        <h2>Audio analysé : <?= e($audio['filename']) ?></h2>
+        <dl class="meta-list" style="font-size:1.2em;">
+          <div><dt>Verdict audio</dt><dd><span class="badge <?= ds_verdict_class($audio['verdict']) ?>"><?= e($audio['verdict']) ?></span></dd></div>
+          <div><dt>Score « réel »</dt><dd><?= number_format((float) $audio['avg_real'], 2) ?>%</dd></div>
+          <div><dt>Score « deepfake »</dt><dd><?= number_format((float) $audio['avg_fake'], 2) ?>%</dd></div>
+        </dl>
         <?php if (($audio['status'] ?? '') === 'non_implemente'): ?>
-          <p class="notice">🔧 <?= e($audio['message']) ?></p>
+          <p class="notice"><?= e($audio['message']) ?></p>
         <?php else: ?>
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
             <span class="badge <?= ds_verdict_class($audio['verdict']) ?>" style="font-size:1em;"><?= e($audio['verdict']) ?></span>

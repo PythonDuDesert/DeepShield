@@ -37,17 +37,13 @@ $flash = ds_flash_get();
     <div class="dash-grid">
       <section class="panel">
         <h2>Fichiers à analyser</h2>
-        <p class="muted">
-          Le service fonctionne avec une seule modalité si nécessaire — le score global s'adapte
-          en conséquence.
-        </p>
         <form method="post" action="analyze.php" enctype="multipart/form-data" id="analyze-form">
           <div class="dropzone" id="dropzone-video">
-            <label for="video_file"><strong>Vidéo</strong> (.mp4, .mov) — optionnelle</label>
+            <label for="video_file"><strong>Vidéo</strong> (.mp4, .mov)</label>
             <input type="file" id="video_file" name="video_file" accept=".mp4,.mov">
           </div>
           <div class="dropzone" id="dropzone-audio">
-            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3) — optionnel</label>
+            <label for="audio_file"><strong>Audio</strong> (.wav, .mp3)</label>
             <input type="file" id="audio_file" name="audio_file" accept=".wav,.mp3">
           </div>
 
@@ -78,7 +74,7 @@ $flash = ds_flash_get();
         </ol>
         <hr class="sep">
         <h2 style="font-size:0.95em;">Formats acceptés</h2>
-        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code> (score heuristique en attendant un modèle ASVspoof entraîné).</p>
+        <p class="muted">Vidéo : <code>.mp4</code>, <code>.mov</code> — Audio : <code>.wav</code>, <code>.mp3</code></p>
         <hr class="sep">
         <p class="muted">
           ⚠ Le score produit est une aide à la décision. Il ne remplace jamais un contrôle humain
