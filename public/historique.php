@@ -54,7 +54,7 @@ if ($dbError === null) {
       </div>
     </div>
 
-    <section class="panel">
+    <div class="panel">
       <?php if (empty($all)): ?>
         <div class="empty-state">
           <img src="assets/images/rechercher.png" alt="Analyser" style="width:25px; height:25px; object-fit:contain;">
@@ -77,7 +77,7 @@ if ($dbError === null) {
           </tbody>
         </table>
       <?php endif; ?>
-    </section>
+      </div>
 
     <?php endif; ?>
   </main>

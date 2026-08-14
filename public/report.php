@@ -102,14 +102,14 @@ $global = $report['global'] ?? null;
       <?php if ($video): ?>
       <section class="panel" style="margin-left: 18vw; width: 100%;">
         <h2>Vidéo analysée : <?= e($video['filename']) ?></h2>
-        <dl class="meta-list">
+        <dl class="meta-list" style="font-size:1.2em;">
           <div><dt>Verdict vidéo</dt><dd><span class="badge <?= ds_verdict_class($video['verdict']) ?>"><?= e($video['verdict']) ?></span></dd></div>
           <div><dt>Score « réel »</dt><dd><?= number_format((float) $video['avg_real'], 2) ?>%</dd></div>
           <div><dt>Score « deepfake »</dt><dd><?= number_format((float) $video['avg_fake'], 2) ?>%</dd></div>
           <div><dt>Frames analysées</dt><dd><?= (int) $video['n_frames_analyzed'] ?></dd></div>
         </dl>
 
-        <h2 style="font-size:0.95em;margin-top:20px;">Explicabilité — frames les plus suspectes</h2>
+        <h2 style="font-size:1em; margin-top:20px;">Détails</h2>
         <p class="muted">Les frames au score « réel » le plus bas, celles qui font le plus pencher le verdict.</p>
         <table class="table">
           <thead><tr><th>Frame</th><th>Réel</th><th>Deepfake</th><th></th></tr></thead>
@@ -145,8 +145,13 @@ $global = $report['global'] ?? null;
       <?php endif; ?>
 
       <?php if ($audio): ?>
-      <section class="panel" style="margin-left: 18vw; width: 100%;">
+      <section class="panel" style="margin-left: 18vw; width: 88%;">
         <h2>Audio analysé : <?= e($audio['filename']) ?></h2>
+        <dl class="meta-list" style="font-size:1.2em;">
+          <div><dt>Verdict audio</dt><dd><span class="badge <?= ds_verdict_class($audio['verdict']) ?>"><?= e($audio['verdict']) ?></span></dd></div>
+          <div><dt>Score « réel »</dt><dd><?= number_format((float) $audio['avg_real'], 2) ?>%</dd></div>
+          <div><dt>Score « deepfake »</dt><dd><?= number_format((float) $audio['avg_fake'], 2) ?>%</dd></div>
+        </dl>
         <?php if (($audio['status'] ?? '') === 'non_implemente'): ?>
           <p class="notice"><?= e($audio['message']) ?></p>
         <?php else: ?>
