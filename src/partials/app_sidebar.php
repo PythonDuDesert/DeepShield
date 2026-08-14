@@ -72,13 +72,13 @@ $role = $_SESSION['role'];
     </nav>
 
     <div class="app-sidebar-footer">
-        <div class="user-pill">
+        <a href="profile.php" class="user-pill" style="text-decoration:none;<?php echo ($current_page == 'profile.php') ? 'border-color:var(--cyan);' : ''; ?>" title="Mon profil">
             <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'], 0, 1) . substr($currentUser['last_name'], 0, 1))) ?></span>
             <div class="user-pill-info">
                 <span class="user-name"><?= e($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></span>
                 <span class="user-email"><?= e($currentUser['email']) ?></span>
             </div>
-        </div>
+        </a>
         <a href="logout.php" class="nav-item" style="margin-bottom:-25px;">
             <span class="app-nav-icon"><img src="assets/images/logout.png" alt="Logout" style="width:25px; height:25px; object-fit:contain;"></span>
             <span>Se déconnecter</span>

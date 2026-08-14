@@ -155,7 +155,26 @@ $global = $report['global'] ?? null;
         <?php if (($audio['status'] ?? '') === 'non_implemente'): ?>
           <p class="notice"><?= e($audio['message']) ?></p>
         <?php else: ?>
-          <pre class="raw-json"><?= e(json_encode($audio, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) ?></pre>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+            <span class="badge <?= ds_verdict_class($audio['verdict']) ?>" style="font-size:1em;"><?= e($audio['verdict']) ?></span>
+            <span class="muted">Score « réel » : <strong style="color:var(--text-main)"><?= number_format((float) $audio['avg_real'], 1) ?>%</strong></span>
+          </div>
+          <div class="mini-bar" style="height:9px;margin-bottom:14px;">
+            <div class="mini-bar-fill" style="width: <?= (float) $audio['avg_real'] ?>%"></div>
+          </div>
+          <?php if (!empty($audio['features'])): ?>
+            <table class="table">
+              <thead><tr><th>Descripteur</th><th>Valeur</th></tr></thead>
+              <tbody>
+                <tr><td>Variance MFCC</td><td><?= e((string) $audio['features']['mfcc_variance']) ?></td></tr>
+                <tr><td>Platitude spectrale</td><td><?= e((string) $audio['features']['spectral_flatness']) ?></td></tr>
+                <tr><td>Taux de passage par zéro</td><td><?= e((string) $audio['features']['zero_crossing_rate']) ?></td></tr>
+              </tbody>
+            </table>
+          <?php endif; ?>
+          <?php if (!empty($audio['engine_note'])): ?>
+            <p class="disclaimer">ℹ <?= e($audio['engine_note']) ?></p>
+          <?php endif; ?>
         <?php endif; ?>
       </section>
       <?php endif; ?>

@@ -110,9 +110,10 @@ $faqCategories = [
         'items' => [
             [
                 'q' => "L'analyse audio est-elle disponible ?",
-                'a' => "Pas encore : le moteur audio (extraction de caractéristiques spectrales + modèle entraîné sur 
-                        ASVspoof) est en cours de développement. Le formulaire accepte déjà un fichier audio, mais le 
-                        rapport indique explicitement que cette modalité n'est pas encore implémentée.",
+                'a' => "Oui : le moteur audio extrait des caractéristiques spectrales (variance des MFCC, platitude 
+                        spectrale, taux de passage par zéro) et produit un score heuristique explicable. C'est une 
+                        base de référence en attendant un modèle entraîné sur ASVspoof, qui remplacera cette 
+                        heuristique sans changer l'interface du rapport.",
             ],
             [
                 'q' => "Le mode démonstration reflète-t-il de vrais scores ?",

@@ -64,6 +64,7 @@ ML_DIR = env_str("DEEPSHIELD_ML_SRC_DIR", os.path.join(os.path.dirname(os.path.a
 MODEL_CACHE_DIR = env_str("DEEPSHIELD_MODEL_CACHE_DIR", "./storage")
 FACE_MODEL_PATH = env_str("DEEPSHIELD_FACE_MODEL_PATH", os.path.join(MODEL_CACHE_DIR, "det_10g.onnx"),)
 GENAI_MODEL_NAME = env_str("DEEPSHIELD_VIDEO_MODEL", "prithivMLmods/Deep-Fake-Detector-v2-Model")
+AUDIO_THRESHOLD_DEFAULT = env_float("DEEPSHIELD_AUDIO_THRESHOLD", 50)
 TEMP_DIR = env_str("DEEPSHIELD_TEMP_DIR", "./storage/temp")
 
 def log(msg):
@@ -188,7 +189,7 @@ def build_report(video_path, audio_path, max_frames, threshold):
     modalities_used = []
     if video_block:
         modalities_used.append("video")
-    if audio_block and audio_block.get("status") != "non_implemente":
+    if audio_block:
         modalities_used.append("audio")
 
     if video_block and audio_block:

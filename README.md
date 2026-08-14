@@ -6,9 +6,9 @@ Omar TANARADJE<br>
 Olivier YAMMINE<br>
 
 
-<br><br>
-ROLES : 0='admin'; 1='premium user'; 2='user'
 <br>
+ROLES : 0='admin'; 1='premium user'; 2='user'
+<br><br>
 ---
 
 INFORMATION SUR LES LOGS : 
@@ -190,6 +190,7 @@ Pour désactiver le cron :
 
 ---
 
+
 ## Notes
 
 - Le script tourne en arrière-plan sous le compte SYSTEM, aucune fenêtre ne s'ouvre.
@@ -202,6 +203,10 @@ Pour désactiver le cron :
      XAMPP : C:\xampp\php\php.exe
 
 ---
+
+<br><br>
+## Audio
+Télécharger et installer FFMPEG (essential) : https://www.gyan.dev/ffmpeg/builds/ (renommer le dossier "ffmpeg-2026-08-09-git-6bbc22dc09..." -> "ffmpeg")
 
 <br><br>
 **Crédits icones : https://www.flaticon.com/fr/icones**
