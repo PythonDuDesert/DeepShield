@@ -194,11 +194,23 @@ def build_report(video_path, audio_path, max_frames, threshold):
     if video_block and audio_block:
         # Fusion des deux modalités sur la même échelle 0-100.
         # Le score global est toujours un score de REAL.
-        global_score = round((video_block["avg_real"] * 0.6) + (audio_block["avg_real"] * 0.4), 2)
+        global_score = round(
+            (video_block["avg_real"] * 0.6)
+            + (audio_block["avg_real"] * 0.4),
+            2
+        )
         global_verdict = verdict_from_score(global_score, threshold)
+
     elif video_block:
+        # Vidéo seule
         global_score = video_block["avg_real"]
         global_verdict = video_block["verdict"]
+
+    elif audio_block:
+        # Audio seul
+        global_score = audio_block["avg_real"]
+        global_verdict = audio_block["verdict"]
+
     else:
         global_score = None
         global_verdict = "INDÉTERMINÉ"
