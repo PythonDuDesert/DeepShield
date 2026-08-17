@@ -145,7 +145,7 @@ $global = $report['global'] ?? null;
       <?php endif; ?>
 
       <?php if ($audio): ?>
-      <section class="panel" style="margin-left: 18vw; width: 88%;">
+      <section class="panel" style="margin-left: 18vw; width: 100%;">
         <h2>Audio analysé : <?= e($audio['filename']) ?></h2>
         <dl class="meta-list" style="font-size:1.2em;">
           <div><dt>Verdict audio</dt><dd><span class="badge <?= ds_verdict_class($audio['verdict']) ?>"><?= e($audio['verdict']) ?></span></dd></div>
