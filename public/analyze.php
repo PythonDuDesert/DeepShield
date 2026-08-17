@@ -59,6 +59,34 @@ function ds_handle_upload(string $fieldName, array $allowedExt, int $maxBytes, s
     return $destination;
 }
 
+/**
+ * Supprime récursivement tout le contenu d'un dossier temporaire.
+ */
+function ds_delete_temp_contents(string $directory): void
+{
+    if (!is_dir($directory)) {
+        return;
+    }
+    $items = scandir($directory);
+    
+    if ($items === false) {
+        return;
+    }
+    
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        $path = $directory . DIRECTORY_SEPARATOR . $item;
+        if (is_dir($path) && !is_link($path)) {
+            ds_delete_temp_contents($path);
+            @rmdir($path);
+        } else {
+            @unlink($path);
+        }
+    }
+}
+
 $store = new ReportStore($config['reports_dir']);
 $videos = new VideoRepository($pdo);
 $user = $auth->currentUser();
@@ -115,13 +143,9 @@ try {
         // VIDÉO
         // ------------------------------------------------------
         if (!empty($report['video'])) {
-
             $verdict = (string) ($report['video']['verdict'] ?? 'SUSPECT');
-
             $avgReal = (float) ($report['video']['avg_real'] ?? 0);
-
             $scoreReal = (int) round($avgReal);
-
             $nSuspect = count(
                 array_filter(
                     $report['video']['frames'] ?? [],
@@ -265,15 +289,31 @@ try {
         }
     }
 
-    // Exigence 5.2 : suppression des fichiers biométriques après analyse,
-    // sauf consentement explicite au ré-entraînement.
+    // ==========================================================
+    // NETTOYAGE DES FICHIERS UPLOADÉS
+    // ==========================================================
+    // Le fichier source est conservé uniquement si l'utilisateur
+    // a explicitement donné son consentement.
+    // ==========================================================
+
     if ($config['auto_delete_uploads'] && !$keepForRetraining) {
-        foreach ([$videoPath, $audioPath] as $p) {
-            if ($p !== null && is_file($p)) {
-                @unlink($p);
+
+        foreach ([$videoPath, $audioPath] as $path) {
+
+            if ($path !== null && is_file($path)) {
+                @unlink($path);
             }
         }
     }
+
+    // ==========================================================
+    // NETTOYAGE DES DONNÉES TEMPORAIRES
+    // ==========================================================
+    // storage/temp est TOUJOURS nettoyé, quel que soit le
+    // consentement de l'utilisateur.
+    // Le dossier storage/temp lui-même est conservé.
+    // ==========================================================
+    ds_delete_temp_contents($config['temp_dir']);
 
     header('Location: report.php?id=' . urlencode($id));
     exit;
