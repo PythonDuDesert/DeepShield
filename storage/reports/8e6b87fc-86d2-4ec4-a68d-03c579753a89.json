@@ -1,0 +1,12 @@
+{
+    "status": "error",
+    "error": "'avg_real'",
+    "generated_at": "2026-08-14T20:20:02.419755+00:00",
+    "user_id": 1,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "908_31957_000007_000001.wav",
+        "kept_for_retraining": false
+    },
+    "id": "8e6b87fc-86d2-4ec4-a68d-03c579753a89"
+}
