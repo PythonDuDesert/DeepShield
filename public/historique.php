@@ -110,7 +110,6 @@ if ($dbError === null) {
      * ----------------------------------------------------------
      */
     if ($filter !== '') {
-
         $all = array_values(
             array_filter(
                 $all,
