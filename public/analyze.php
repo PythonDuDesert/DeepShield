@@ -174,13 +174,8 @@ try {
                 $explinations
             );
 
-            /*
-            * Le rapport vidéo est associé à videos.id.
-            */
-            $id = $store->save(
-                $report,
-                (string) $videoId
-            );
+            // Le rapport vidéo est associé à videos.id.
+            $id = $store->save($report, 'video_' . $videoId);
         }
 
         // ------------------------------------------------------
@@ -273,10 +268,7 @@ try {
             * PAS le rapport vidéo déjà créé.
             */
             if ($videoId === null) {
-                $id = $store->save(
-                    $report,
-                    (string) $audioId
-                );
+                $id = $store->save($report, 'audio_' . $audioId);
             }
         }
 

@@ -1,0 +1,494 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-17T16:46:05.237087+00:00",
+    "elapsed_seconds": 14.24,
+    "params": {
+        "max_frames": 60,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": {
+        "filename": "test_video14.mp4",
+        "verdict": "DEEPFAKE",
+        "avg_real": 34.55,
+        "avg_fake": 65.45,
+        "n_frames_analyzed": 60,
+        "n_frames_skipped": 0,
+        "frames": [
+            {
+                "index": 0,
+                "file": "frame_0000.png",
+                "score_real": 17.73,
+                "score_deepfake": 82.27,
+                "suspect": true
+            },
+            {
+                "index": 1,
+                "file": "frame_0003.png",
+                "score_real": 14.08,
+                "score_deepfake": 85.92,
+                "suspect": true
+            },
+            {
+                "index": 2,
+                "file": "frame_0006.png",
+                "score_real": 5.27,
+                "score_deepfake": 94.73,
+                "suspect": true
+            },
+            {
+                "index": 3,
+                "file": "frame_0009.png",
+                "score_real": 3.82,
+                "score_deepfake": 96.18,
+                "suspect": true
+            },
+            {
+                "index": 4,
+                "file": "frame_0012.png",
+                "score_real": 5.16,
+                "score_deepfake": 94.84,
+                "suspect": true
+            },
+            {
+                "index": 5,
+                "file": "frame_0015.png",
+                "score_real": 5.09,
+                "score_deepfake": 94.91,
+                "suspect": true
+            },
+            {
+                "index": 6,
+                "file": "frame_0018.png",
+                "score_real": 5.8,
+                "score_deepfake": 94.2,
+                "suspect": true
+            },
+            {
+                "index": 7,
+                "file": "frame_0021.png",
+                "score_real": 5.97,
+                "score_deepfake": 94.03,
+                "suspect": true
+            },
+            {
+                "index": 8,
+                "file": "frame_0025.png",
+                "score_real": 5.21,
+                "score_deepfake": 94.79,
+                "suspect": true
+            },
+            {
+                "index": 9,
+                "file": "frame_0028.png",
+                "score_real": 2.51,
+                "score_deepfake": 97.49,
+                "suspect": true
+            },
+            {
+                "index": 10,
+                "file": "frame_0031.png",
+                "score_real": 1.08,
+                "score_deepfake": 98.92,
+                "suspect": true
+            },
+            {
+                "index": 11,
+                "file": "frame_0034.png",
+                "score_real": 1.59,
+                "score_deepfake": 98.41,
+                "suspect": true
+            },
+            {
+                "index": 12,
+                "file": "frame_0037.png",
+                "score_real": 1.74,
+                "score_deepfake": 98.26,
+                "suspect": true
+            },
+            {
+                "index": 13,
+                "file": "frame_0040.png",
+                "score_real": 24.3,
+                "score_deepfake": 75.7,
+                "suspect": true
+            },
+            {
+                "index": 14,
+                "file": "frame_0043.png",
+                "score_real": 13.66,
+                "score_deepfake": 86.34,
+                "suspect": true
+            },
+            {
+                "index": 15,
+                "file": "frame_0047.png",
+                "score_real": 17.28,
+                "score_deepfake": 82.72,
+                "suspect": true
+            },
+            {
+                "index": 16,
+                "file": "frame_0050.png",
+                "score_real": 49.87,
+                "score_deepfake": 50.13,
+                "suspect": true
+            },
+            {
+                "index": 17,
+                "file": "frame_0053.png",
+                "score_real": 61.29,
+                "score_deepfake": 38.71,
+                "suspect": false
+            },
+            {
+                "index": 18,
+                "file": "frame_0056.png",
+                "score_real": 44.99,
+                "score_deepfake": 55.01,
+                "suspect": true
+            },
+            {
+                "index": 19,
+                "file": "frame_0059.png",
+                "score_real": 54.8,
+                "score_deepfake": 45.2,
+                "suspect": false
+            },
+            {
+                "index": 20,
+                "file": "frame_0062.png",
+                "score_real": 54.6,
+                "score_deepfake": 45.4,
+                "suspect": false
+            },
+            {
+                "index": 21,
+                "file": "frame_0065.png",
+                "score_real": 23.9,
+                "score_deepfake": 76.1,
+                "suspect": true
+            },
+            {
+                "index": 22,
+                "file": "frame_0068.png",
+                "score_real": 32.68,
+                "score_deepfake": 67.32,
+                "suspect": true
+            },
+            {
+                "index": 23,
+                "file": "frame_0072.png",
+                "score_real": 69.57,
+                "score_deepfake": 30.43,
+                "suspect": false
+            },
+            {
+                "index": 24,
+                "file": "frame_0075.png",
+                "score_real": 69.25,
+                "score_deepfake": 30.75,
+                "suspect": false
+            },
+            {
+                "index": 25,
+                "file": "frame_0078.png",
+                "score_real": 69.86,
+                "score_deepfake": 30.14,
+                "suspect": false
+            },
+            {
+                "index": 26,
+                "file": "frame_0081.png",
+                "score_real": 33.22,
+                "score_deepfake": 66.78,
+                "suspect": true
+            },
+            {
+                "index": 27,
+                "file": "frame_0084.png",
+                "score_real": 13.07,
+                "score_deepfake": 86.93,
+                "suspect": true
+            },
+            {
+                "index": 28,
+                "file": "frame_0087.png",
+                "score_real": 11.89,
+                "score_deepfake": 88.11,
+                "suspect": true
+            },
+            {
+                "index": 29,
+                "file": "frame_0090.png",
+                "score_real": 1.4,
+                "score_deepfake": 98.6,
+                "suspect": true
+            },
+            {
+                "index": 30,
+                "file": "frame_0094.png",
+                "score_real": 5.01,
+                "score_deepfake": 94.99,
+                "suspect": true
+            },
+            {
+                "index": 31,
+                "file": "frame_0097.png",
+                "score_real": 10.64,
+                "score_deepfake": 89.36,
+                "suspect": true
+            },
+            {
+                "index": 32,
+                "file": "frame_0100.png",
+                "score_real": 13.81,
+                "score_deepfake": 86.19,
+                "suspect": true
+            },
+            {
+                "index": 33,
+                "file": "frame_0103.png",
+                "score_real": 5.67,
+                "score_deepfake": 94.33,
+                "suspect": true
+            },
+            {
+                "index": 34,
+                "file": "frame_0106.png",
+                "score_real": 15.85,
+                "score_deepfake": 84.15,
+                "suspect": true
+            },
+            {
+                "index": 35,
+                "file": "frame_0109.png",
+                "score_real": 66.86,
+                "score_deepfake": 33.14,
+                "suspect": false
+            },
+            {
+                "index": 36,
+                "file": "frame_0112.png",
+                "score_real": 3.28,
+                "score_deepfake": 96.72,
+                "suspect": true
+            },
+            {
+                "index": 37,
+                "file": "frame_0116.png",
+                "score_real": 64.64,
+                "score_deepfake": 35.36,
+                "suspect": false
+            },
+            {
+                "index": 38,
+                "file": "frame_0119.png",
+                "score_real": 58.86,
+                "score_deepfake": 41.14,
+                "suspect": false
+            },
+            {
+                "index": 39,
+                "file": "frame_0122.png",
+                "score_real": 21,
+                "score_deepfake": 79,
+                "suspect": true
+            },
+            {
+                "index": 40,
+                "file": "frame_0125.png",
+                "score_real": 12.51,
+                "score_deepfake": 87.49,
+                "suspect": true
+            },
+            {
+                "index": 41,
+                "file": "frame_0128.png",
+                "score_real": 39.26,
+                "score_deepfake": 60.74,
+                "suspect": true
+            },
+            {
+                "index": 42,
+                "file": "frame_0131.png",
+                "score_real": 39.46,
+                "score_deepfake": 60.54,
+                "suspect": true
+            },
+            {
+                "index": 43,
+                "file": "frame_0134.png",
+                "score_real": 75.6,
+                "score_deepfake": 24.4,
+                "suspect": false
+            },
+            {
+                "index": 44,
+                "file": "frame_0137.png",
+                "score_real": 58.45,
+                "score_deepfake": 41.55,
+                "suspect": false
+            },
+            {
+                "index": 45,
+                "file": "frame_0141.png",
+                "score_real": 82.04,
+                "score_deepfake": 17.96,
+                "suspect": false
+            },
+            {
+                "index": 46,
+                "file": "frame_0144.png",
+                "score_real": 84.44,
+                "score_deepfake": 15.56,
+                "suspect": false
+            },
+            {
+                "index": 47,
+                "file": "frame_0147.png",
+                "score_real": 88.03,
+                "score_deepfake": 11.97,
+                "suspect": false
+            },
+            {
+                "index": 48,
+                "file": "frame_0150.png",
+                "score_real": 79.67,
+                "score_deepfake": 20.33,
+                "suspect": false
+            },
+            {
+                "index": 49,
+                "file": "frame_0153.png",
+                "score_real": 70.78,
+                "score_deepfake": 29.22,
+                "suspect": false
+            },
+            {
+                "index": 50,
+                "file": "frame_0156.png",
+                "score_real": 68.2,
+                "score_deepfake": 31.8,
+                "suspect": false
+            },
+            {
+                "index": 51,
+                "file": "frame_0159.png",
+                "score_real": 85.46,
+                "score_deepfake": 14.54,
+                "suspect": false
+            },
+            {
+                "index": 52,
+                "file": "frame_0163.png",
+                "score_real": 57.77,
+                "score_deepfake": 42.23,
+                "suspect": false
+            },
+            {
+                "index": 53,
+                "file": "frame_0166.png",
+                "score_real": 30.37,
+                "score_deepfake": 69.63,
+                "suspect": true
+            },
+            {
+                "index": 54,
+                "file": "frame_0169.png",
+                "score_real": 10.13,
+                "score_deepfake": 89.87,
+                "suspect": true
+            },
+            {
+                "index": 55,
+                "file": "frame_0172.png",
+                "score_real": 3.72,
+                "score_deepfake": 96.28,
+                "suspect": true
+            },
+            {
+                "index": 56,
+                "file": "frame_0175.png",
+                "score_real": 13.65,
+                "score_deepfake": 86.35,
+                "suspect": true
+            },
+            {
+                "index": 57,
+                "file": "frame_0178.png",
+                "score_real": 47.21,
+                "score_deepfake": 52.79,
+                "suspect": true
+            },
+            {
+                "index": 58,
+                "file": "frame_0181.png",
+                "score_real": 49.59,
+                "score_deepfake": 50.41,
+                "suspect": true
+            },
+            {
+                "index": 59,
+                "file": "frame_0185.png",
+                "score_real": 90.24,
+                "score_deepfake": 9.76,
+                "suspect": false
+            }
+        ],
+        "engine": "real",
+        "frames_sorted_by_suspicion": [
+            {
+                "index": 10,
+                "file": "frame_0031.png",
+                "score_real": 1.08,
+                "score_deepfake": 98.92,
+                "suspect": true
+            },
+            {
+                "index": 29,
+                "file": "frame_0090.png",
+                "score_real": 1.4,
+                "score_deepfake": 98.6,
+                "suspect": true
+            },
+            {
+                "index": 11,
+                "file": "frame_0034.png",
+                "score_real": 1.59,
+                "score_deepfake": 98.41,
+                "suspect": true
+            },
+            {
+                "index": 12,
+                "file": "frame_0037.png",
+                "score_real": 1.74,
+                "score_deepfake": 98.26,
+                "suspect": true
+            },
+            {
+                "index": 9,
+                "file": "frame_0028.png",
+                "score_real": 2.51,
+                "score_deepfake": 97.49,
+                "suspect": true
+            }
+        ]
+    },
+    "audio": null,
+    "global": {
+        "verdict": "DEEPFAKE",
+        "confidence_real_percent": 34.55,
+        "modalities_used": [
+            "video"
+        ]
+    },
+    "user_id": 2,
+    "uploaded_files": {
+        "video_original_name": "test_video14.mp4",
+        "audio_original_name": "",
+        "kept_for_retraining": false
+    },
+    "id": "video_14"
+}

@@ -1,0 +1,112 @@
+{
+    "status": "ok",
+    "error": null,
+    "generated_at": "2026-08-17T16:56:12.323285+00:00",
+    "elapsed_seconds": 6.52,
+    "params": {
+        "max_frames": 30,
+        "threshold": 50,
+        "engine": "real"
+    },
+    "video": null,
+    "audio": {
+        "filename": "31.valle_.wav",
+        "status": "ok",
+        "real_probability": 0.2066,
+        "fake_probability": 0.7934,
+        "avg_real": 20.66,
+        "avg_fake": 79.34,
+        "segments": [
+            {
+                "index": 0,
+                "start_seconds": 0,
+                "end_seconds": 1,
+                "real_probability": 0.9102,
+                "fake_probability": 0.0898
+            },
+            {
+                "index": 1,
+                "start_seconds": 0.5,
+                "end_seconds": 1.5,
+                "real_probability": 0.1246,
+                "fake_probability": 0.8754
+            },
+            {
+                "index": 2,
+                "start_seconds": 1,
+                "end_seconds": 2,
+                "real_probability": 0.1252,
+                "fake_probability": 0.8748
+            },
+            {
+                "index": 3,
+                "start_seconds": 1.5,
+                "end_seconds": 2.5,
+                "real_probability": 0.292,
+                "fake_probability": 0.708
+            },
+            {
+                "index": 4,
+                "start_seconds": 2,
+                "end_seconds": 3,
+                "real_probability": 0.1068,
+                "fake_probability": 0.8932
+            },
+            {
+                "index": 5,
+                "start_seconds": 2.5,
+                "end_seconds": 3.5,
+                "real_probability": 0.0905,
+                "fake_probability": 0.9095
+            },
+            {
+                "index": 6,
+                "start_seconds": 3,
+                "end_seconds": 4,
+                "real_probability": 0.1077,
+                "fake_probability": 0.8923
+            },
+            {
+                "index": 7,
+                "start_seconds": 3.5,
+                "end_seconds": 4.5,
+                "real_probability": 0.1023,
+                "fake_probability": 0.8977
+            },
+            {
+                "index": 8,
+                "start_seconds": 4,
+                "end_seconds": 5,
+                "real_probability": 0.0979,
+                "fake_probability": 0.9021
+            },
+            {
+                "index": 9,
+                "start_seconds": 4.5,
+                "end_seconds": 5.033,
+                "real_probability": 0.1086,
+                "fake_probability": 0.8914
+            }
+        ],
+        "n_segments": 10,
+        "duration_seconds": 5.033,
+        "model": "Gustking/wav2vec2-large-xlsr-deepfake-audio-classification",
+        "device": "cuda",
+        "engine": "wav2vec2",
+        "verdict": "DEEPFAKE"
+    },
+    "global": {
+        "verdict": "DEEPFAKE",
+        "confidence_real_percent": 20.66,
+        "modalities_used": [
+            "audio"
+        ]
+    },
+    "user_id": 3,
+    "uploaded_files": {
+        "video_original_name": "",
+        "audio_original_name": "31.valle_.wav",
+        "kept_for_retraining": false
+    },
+    "id": "audio_1"
+}
