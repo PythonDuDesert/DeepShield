@@ -4,15 +4,17 @@ require_once __DIR__ . '/../src/bootstrap.php';
 $navActive = 'historique';
 
 ds_require_login($auth, $dbError);
-
 $flash = ds_flash_get();
 $filter = $_GET['verdict'] ?? '';
 $all = [];
-$limits = ['history_limit' => 50, 'csv_export' => false];
+$currentUser = $auth->currentUser();
+$limits = ds_user_limits((int) ($currentUser['role'] ?? 2));
+
 if ($dbError === null) {
     $user = $auth->currentUser();
     $limits = ds_user_limits((int) $user['role']);
     $videos = new VideoRepository($pdo);
+    $all = $videos->listByUser((int) $user['id'], 200, $filter);
     $all = $videos->listByUser((int) $user['id'], $limits['history_limit'], $filter);
 
     if (($_GET['export'] ?? '') === 'csv' && $limits['csv_export']) {
@@ -31,6 +33,103 @@ if ($dbError === null) {
         fclose($out);
         exit;
     }
+
+    /*
+     * ----------------------------------------------------------
+     * VIDÉOS
+     * ----------------------------------------------------------
+     */
+    $stmtVideo = $pdo->prepare(
+        'SELECT
+            id,
+            video_name AS file_name,
+            file_size,
+            uploaded_at,
+            explinations,
+            "VIDÉO" AS media_type
+         FROM videos
+         WHERE user_id = :user_id
+         ORDER BY uploaded_at DESC
+         LIMIT 200'
+    );
+
+    $stmtVideo->execute([
+        ':user_id' => (int) $user['id']
+    ]);
+
+    $videos = $stmtVideo->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+     * ----------------------------------------------------------
+     * AUDIOS
+     * ----------------------------------------------------------
+     */
+    $stmtAudio = $pdo->prepare(
+        'SELECT
+            id,
+            audio_name AS file_name,
+            file_size,
+            uploaded_at,
+            explinations,
+            "AUDIO" AS media_type
+         FROM audios
+         WHERE user_id = :user_id
+         ORDER BY uploaded_at DESC
+         LIMIT 200'
+    );
+
+    $stmtAudio->execute([
+        ':user_id' => (int) $user['id']
+    ]);
+
+    $audios = $stmtAudio->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+     * ----------------------------------------------------------
+     * FUSION VIDÉOS + AUDIOS
+     * ----------------------------------------------------------
+     */
+    $all = array_merge($videos, $audios);
+
+    /*
+     * Tri chronologique global.
+     */
+    usort(
+        $all,
+        static function (array $a, array $b): int {
+            return strcmp(
+                (string) $b['uploaded_at'],
+                (string) $a['uploaded_at']
+            );
+        }
+    );
+
+    /*
+     * ----------------------------------------------------------
+     * FILTRE VERDICT
+     * ----------------------------------------------------------
+     */
+    if ($filter !== '') {
+
+        $all = array_values(
+            array_filter(
+                $all,
+                static function (array $row) use ($filter): bool {
+
+                    $verdict = VideoRepository::verdictFromExplinations(
+                        (string) $row['explinations']
+                    );
+
+                    return $verdict === $filter;
+                }
+            )
+        );
+    }
+
+    /*
+     * Maximum 200 résultats après fusion.
+     */
+    $all = array_slice($all, 0, 200);
 }
 ?>
 <!DOCTYPE html>
@@ -87,17 +186,52 @@ if ($dbError === null) {
         </div>
       <?php else: ?>
         <table class="table" style="font-size: medium;">
-          <thead><tr><th>Date</th><th>Fichier</th><th>Taille</th><th>Verdict</th><th></th></tr></thead>
-          <tbody>
-            <?php foreach ($all as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>
+          <thead>
               <tr>
-                <td><?= e((string) $r['uploaded_at']) ?></td>
-                <td><?= e($r['video_name']) ?></td>
-                <td><?= e(ds_format_bytes((int) $r['file_size'])) ?></td>
-                <td><span class="badge <?= ds_verdict_class($verdict) ?>"><?= e($verdict) ?></span></td>
-                <td><a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a></td>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Fichier</th>
+                  <th>Taille</th>
+                  <th>Verdict</th>
+                  <th></th>
               </tr>
-            <?php endforeach; ?>
+          </thead>
+          <tbody>
+            <?php foreach ($all as $r): ?>
+            <?php
+              $verdict = VideoRepository::verdictFromExplinations(
+                  (string) $r['explinations']
+              );
+            ?>
+            <tr>
+                <td>
+                    <?= e((string) $r['uploaded_at']) ?>
+                </td>
+                <td>
+                    <span class="badge">
+                        <?= e($r['media_type']) ?>
+                    </span>
+                </td>
+                <td>
+                    <?= e($r['file_name']) ?>
+                </td>
+                <td>
+                    <?= e(
+                        ds_format_bytes(
+                            (int) $r['file_size']
+                        )
+                    ) ?>
+                </td>
+                <td>
+                    <span class="badge <?= ds_verdict_class($verdict) ?>">
+                        <?= e($verdict) ?>
+                    </span>
+                </td>
+                <td>
+                    <a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a>
+                </td>
+            </tr>
+          <?php endforeach; ?>
           </tbody>
         </table>
       <?php endif; ?>

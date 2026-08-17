@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../src/bootstrap.php';
-
 ds_require_login($auth, $dbError);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -14,6 +13,8 @@ if ($dbError !== null) {
     header('Location: analyser.php');
     exit;
 }
+
+$limits = ds_user_limits((int) $user['role']);
 
 /**
  * Valide et déplace un fichier uploadé. Retourne le chemin absolu final,
@@ -99,34 +100,169 @@ try {
 
     $isSuccess = ($report['status'] ?? 'error') === 'ok';
 
-    // Persistance en base : uniquement pour la modalité vidéo (table `videos`
-    // du schéma fourni). Une analyse audio seule reste consultable via son
-    // rapport JSON mais n'apparaît pas dans l'historique lié à la base.
-    if ($isSuccess && !empty($report['video'])) {
-        $verdict = $report['video']['verdict'];
-        $scoreReal = (int) round((float) $report['video']['avg_real']);
-        $nSuspect = count(array_filter($report['video']['frames'] ?? [], fn($f) => !empty($f['suspect'])));
-        $explinations = sprintf(
-            '%s — score réel %.1f%%, %d frame(s) suspecte(s) sur %d analysée(s)',
-            $verdict,
-            (float) $report['video']['avg_real'],
-            $nSuspect,
-            (int) $report['video']['n_frames_analyzed']
-        );
-
-        $videoId = $videos->insert(
-            (int) $user['id'],
-            $report['video']['filename'],
-            $originalVideoSize,
-            $user['email'],
-            $scoreReal,
-            $explinations
-        );
-
-        $id = $store->save($report, (string) $videoId);
-    } else {
-        // Échec, ou audio seul : rapport horodaté sans ligne `videos` associée.
+    // ==========================================================
+    // PERSISTANCE EN BASE
+    // ==========================================================
+    if (!$isSuccess) {
+        // Analyse échouée : rapport JSON uniquement.
         $id = $store->save($report);
+
+    } else {
+        $videoId = null;
+        $audioId = null;
+
+        // ------------------------------------------------------
+        // VIDÉO
+        // ------------------------------------------------------
+        if (!empty($report['video'])) {
+
+            $verdict = (string) ($report['video']['verdict'] ?? 'SUSPECT');
+
+            $avgReal = (float) ($report['video']['avg_real'] ?? 0);
+
+            $scoreReal = (int) round($avgReal);
+
+            $nSuspect = count(
+                array_filter(
+                    $report['video']['frames'] ?? [],
+                    fn($f) => !empty($f['suspect'])
+                )
+            );
+
+            $nFrames = (int) (
+                $report['video']['n_frames_analyzed'] ?? 0
+            );
+
+            $explinations = sprintf(
+                '%s — score réel %.1f%%, %d frame(s) suspecte(s) sur %d analysée(s)',
+                $verdict,
+                $avgReal,
+                $nSuspect,
+                $nFrames
+            );
+
+            $videoId = $videos->insert(
+                (int) $user['id'],
+                $report['video']['filename'],
+                $originalVideoSize,
+                $user['email'],
+                $scoreReal,
+                $explinations
+            );
+
+            /*
+            * Le rapport vidéo est associé à videos.id.
+            */
+            $id = $store->save(
+                $report,
+                (string) $videoId
+            );
+        }
+
+        // ------------------------------------------------------
+        // AUDIO
+        // ------------------------------------------------------
+        if (!empty($report['audio'])) {
+            $audio = $report['audio'];
+            $verdict = (string) (
+                $audio['verdict'] ?? 'SUSPECT'
+            );
+
+            if (isset($audio['avg_real'])) {
+                $scoreReal = (float) $audio['avg_real'];
+
+            } elseif (isset($audio['real_probability'])) {
+                $scoreReal = (float) $audio['real_probability'];
+
+                /*
+                * Si le moteur renvoie 0.0 -> 1.0,
+                * conversion en pourcentage.
+                */
+                if ($scoreReal <= 1) {
+                    $scoreReal *= 100;
+                }
+
+            } elseif (isset($audio['score'])) {
+                $scoreReal = (float) $audio['score'];
+
+            } else {
+                $scoreReal = 0;
+            }
+
+            $scoreReal = max(
+                0,
+                min(100, $scoreReal)
+            );
+
+            $scoreRealDb = (int) round($scoreReal);
+            $explinations = sprintf(
+                '%s — score réel %.1f%%',
+                $verdict,
+                $scoreReal
+            );
+
+            $originalAudioSize = (int) (
+                $_FILES['audio_file']['size'] ?? 0
+            );
+
+            /*
+            * Insertion audio.
+            */
+            $stmt = $pdo->prepare(
+                'INSERT INTO audios
+                (
+                    user_id,
+                    sender_email,
+                    audio_name,
+                    file_size,
+                    score,
+                    explinations
+                )
+                VALUES
+                (
+                    :user_id,
+                    :sender_email,
+                    :audio_name,
+                    :file_size,
+                    :score,
+                    :explinations
+                )'
+            );
+
+            $stmt->execute([
+                ':user_id'      => (int) $user['id'],
+                ':sender_email' => $user['email'],
+                ':audio_name'   => $audio['filename']
+                    ?? ($_FILES['audio_file']['name'] ?? 'audio'),
+                ':file_size'    => $originalAudioSize,
+                ':score'        => $scoreRealDb,
+                ':explinations' => $explinations,
+            ]);
+
+            $audioId = (int) $pdo->lastInsertId();
+
+            /*
+            * Si l'analyse est audio seule, le rapport doit
+            * également être sauvegardé.
+            *
+            * Pour une analyse vidéo + audio, on ne remplace
+            * PAS le rapport vidéo déjà créé.
+            */
+            if ($videoId === null) {
+                $id = $store->save(
+                    $report,
+                    (string) $audioId
+                );
+            }
+        }
+
+        /*
+        * Sécurité : une analyse réussie doit toujours avoir
+        * un identifiant de rapport.
+        */
+        if ($id === null) {
+            $id = $store->save($report);
+        }
     }
 
     // Exigence 5.2 : suppression des fichiers biométriques après analyse,

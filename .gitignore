@@ -2,3 +2,5 @@
 /storage/temp
 storage/temp/
 /ffmpeg
+BDD/backups/cron.log
+bridge/__pycache__/audio_detector.cpython-314.pyc
