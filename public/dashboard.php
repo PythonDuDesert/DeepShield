@@ -14,9 +14,129 @@ $user = null;
 
 if ($dbError === null) {
     $user = $auth->currentUser();
-    $videos = new VideoRepository($pdo);
-    $stats = $videos->statsByUser((int) $user['id']);
-    $recent = $videos->listByUser((int) $user['id'], 6);
+
+    /*
+     * ==========================================================
+     * VIDÉOS
+     * ==========================================================
+     */
+    $stmtVideo = $pdo->prepare(
+        'SELECT
+            id,
+            video_name AS file_name,
+            file_size,
+            uploaded_at,
+            score,
+            explinations,
+            "VIDÉO" AS media_type
+         FROM videos
+         WHERE user_id = :user_id
+         ORDER BY uploaded_at DESC'
+    );
+
+    $stmtVideo->execute([
+        ':user_id' => (int) $user['id']
+    ]);
+
+    $videos = $stmtVideo->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+     * ==========================================================
+     * AUDIOS
+     * ==========================================================
+     */
+    $stmtAudio = $pdo->prepare(
+        'SELECT
+            id,
+            audio_name AS file_name,
+            file_size,
+            uploaded_at,
+            score,
+            explinations,
+            "AUDIO" AS media_type
+         FROM audios
+         WHERE user_id = :user_id
+         ORDER BY uploaded_at DESC'
+    );
+
+    $stmtAudio->execute([
+        ':user_id' => (int) $user['id']
+    ]);
+
+    $audios = $stmtAudio->fetchAll(PDO::FETCH_ASSOC);
+
+    /*
+     * ==========================================================
+     * FUSION
+     * ==========================================================
+     */
+    $allAnalyses = array_merge($videos, $audios);
+
+    /*
+     * Tri par date décroissante.
+     */
+
+    usort(
+        $allAnalyses,
+        static function (array $a, array $b): int {
+            return strcmp(
+                (string) $b['uploaded_at'],
+                (string) $a['uploaded_at']
+            );
+        }
+    );
+
+    /*
+     * ==========================================================
+     * STATISTIQUES
+     * ==========================================================
+     */
+
+    $stats = [
+        'total'       => count($allAnalyses),
+        'reel'        => 0,
+        'suspect'     => 0,
+        'deepfake'    => 0,
+        'score_moyen' => 0.0,
+    ];
+
+    $scoreTotal = 0.0;
+
+    foreach ($allAnalyses as $analysis) {
+
+        $verdict = VideoRepository::verdictFromExplinations(
+            (string) $analysis['explinations']
+        );
+
+        switch ($verdict) {
+            case 'RÉEL':
+                $stats['reel']++;
+                break;
+            case 'SUSPECT':
+                $stats['suspect']++;
+                break;
+            case 'DEEPFAKE':
+                $stats['deepfake']++;
+                break;
+        }
+
+        $scoreTotal += (float) ($analysis['score'] ?? 0);
+    }
+
+    if ($stats['total'] > 0) {
+        $stats['score_moyen'] = round(
+            $scoreTotal / $stats['total'],
+            1
+        );
+    }
+
+    /*
+     * ==========================================================
+     * 6 ANALYSES LES PLUS RÉCENTES
+     * ==========================================================
+     */
+
+    $recent = array_slice($allAnalyses, 0, 6);
 }
 
 // Récupérer le message
@@ -85,7 +205,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
         <div class="stat-logo"><img src="assets/images/coche.png" alt="coche.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['reel'] ?></div>
-          <div class="stat-caption">Vidéos jugées réelles</div>
+          <div class="stat-caption">Analyses jugées réelles</div>
         </div>
       </div>
       <div class="stat-card stat-warn">
@@ -99,7 +219,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
         <div class="stat-logo"><img src="assets/images/supprimer.png" alt="supprimer.png" width="30px"></div>
         <div>
           <div class="stat-value"><?= (int) $stats['deepfake'] ?></div>
-          <div class="stat-caption">Vidéos jugées Deepfakes</div>
+          <div class="stat-caption">Analyses jugées Deepfakes</div>
         </div>
       </div>
     </div>
@@ -130,15 +250,43 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
           </div>
         <?php else: ?>
           <table class="table" style="font-size: medium;">
-            <thead><tr><th>Date</th><th>Fichier</th><th>Verdict</th><th></th></tr></thead>
-            <tbody>
-              <?php foreach ($recent as $r): $verdict = VideoRepository::verdictFromExplinations($r['explinations']); ?>
+            <thead>
                 <tr>
-                  <td><?= e(substr((string) $r['uploaded_at'], 0, 16)) ?></td>
-                  <td><?= e($r['video_name']) ?></td>
-                  <td><span class="badge <?= ds_verdict_class($verdict) ?>"><?= e($verdict) ?></span></td>
-                  <td><a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir</a></td>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Fichier</th>
+                    <th>Verdict</th>
+                    <th></th>
                 </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($recent as $r): ?>
+              <?php
+              $verdict = VideoRepository::verdictFromExplinations(
+                  (string) $r['explinations']
+              );
+              ?>
+              <tr>
+                  <td>
+                      <?= e(substr((string) $r['uploaded_at'], 0, 16)) ?>
+                  </td>
+                  <td>
+                      <span class="badge">
+                          <?= e($r['media_type']) ?>
+                      </span>
+                  </td>
+                  <td>
+                      <?= e($r['file_name']) ?>
+                  </td>
+                  <td>
+                      <span class="badge <?= ds_verdict_class($verdict) ?>">
+                          <?= e($verdict) ?>
+                      </span>
+                  </td>
+                  <td>
+                      <a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a>
+                  </td>
+              </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
