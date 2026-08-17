@@ -153,10 +153,12 @@ $flash = ds_flash_get();
 $csrfToken = ds_csrf_token();
 $profileUser = null;
 $myTickets = [];
+$limits = ds_user_limits(2);
 if ($dbError === null) {
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
     $stmt->execute(['id' => $userId]);
     $profileUser = $stmt->fetch();
+    $limits = ds_user_limits((int) $profileUser['role']);
 
     $stmt = $pdo->prepare('SELECT * FROM assistance WHERE user_id = :user_id ORDER BY date_submission DESC LIMIT 20');
     $stmt->execute(['user_id' => $userId]);
@@ -215,6 +217,9 @@ $assistStatusBadge = ['nouveau' => 'badge-warn', 'lu' => 'badge-neutral', 'resol
       </button>
       <button type="button" class="page-tab" data-tab="assistance" onclick="switchPageTab('assistance', this)">
         💬 Assistance <?php if (!empty($myTickets)): ?><span class="tab-count"><?= count($myTickets) ?></span><?php endif; ?>
+      </button>
+      <button type="button" class="page-tab" data-tab="premium" onclick="switchPageTab('premium', this)">
+        ⭐ <?= e($limits['label']) ?>
       </button>
     </nav>
 
@@ -336,6 +341,31 @@ $assistStatusBadge = ['nouveau' => 'badge-warn', 'lu' => 'badge-neutral', 'resol
           <?php endif; ?>
         </section>
       </div>
+    </div>
+
+    <!-- ONGLET : Premium -->
+    <div id="tab-premium" class="page-tab-panel">
+      <section class="panel">
+        <?php if ((int) $profileUser['role'] === 0 || (int) $profileUser['role'] === 1): ?>
+          <h2>⭐ Avantages <?= e($limits['label']) ?></h2>
+          <p class="muted">Votre compte bénéficie des avantages suivants.</p>
+          <dl class="meta-list" style="font-size:1.1em;margin-top:16px;">
+            <div><dt>Historique conservé</dt><dd>Jusqu'à <?= (int) $limits['history_limit'] ?> analyses</dd></div>
+            <div><dt>Taille max. par fichier</dt><dd><?= e(ds_format_bytes($limits['max_upload_bytes'])) ?></dd></div>
+            <div><dt>Export CSV de l'historique</dt><dd><?= $limits['csv_export'] ? 'Disponible' : 'Non disponible' ?></dd></div>
+          </dl>
+        <?php else: ?>
+          <h2>⭐ Passez au compte Premium</h2>
+          <p class="muted">Votre compte est actuellement <?= e($limits['label']) ?>. Un compte premium débloque :</p>
+          <dl class="meta-list" style="font-size:1.1em;margin-top:16px;">
+            <div><dt>Historique conservé</dt><dd>Jusqu'à 500 analyses (au lieu de <?= (int) $limits['history_limit'] ?>)</dd></div>
+            <div><dt>Taille max. par fichier</dt><dd>200 Mo (au lieu de <?= e(ds_format_bytes($limits['max_upload_bytes'])) ?>)</dd></div>
+            <div><dt>Export CSV de l'historique</dt><dd>Disponible</dd></div>
+          </dl>
+          <a href="upgrade_premium.php" class="btn-primary" style="margin-top:18px;">⭐ Passer Premium</a>
+          <p class="disclaimer" style="margin-top:16px;">Le passage en compte premium peut aussi être géré par un administrateur. Contactez le support via l'onglet Assistance en cas de besoin.</p>
+        <?php endif; ?>
+      </section>
     </div>
 
     <?php endif; ?>

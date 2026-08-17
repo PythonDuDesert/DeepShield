@@ -111,6 +111,17 @@ function sendResetPasswordEmail($to, $first_name, $token) {
 }
 
 /**
+ * Email de confirmation de passage au compte Premium
+ */
+function sendPremiumUpgradeEmail($to, $first_name) {
+    $subject = '⭐ Votre compte DeepShield est maintenant Premium';
+    $body = "<h2>Bonjour $first_name,</h2>
+<p>Votre compte DeepShield est passé en <strong>Premium</strong>. Vous bénéficiez désormais d'un historique étendu, d'un quota d'upload plus élevé et de l'export CSV de votre historique.</p>";
+
+    return send_deepshield_email($to, $subject, $body);
+}
+
+/**
  * Email de notification suite à un changement de mot de passe
  */
 function sendPasswordChangedEmail($to, $first_name) {

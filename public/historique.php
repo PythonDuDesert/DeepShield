@@ -8,10 +8,29 @@ ds_require_login($auth, $dbError);
 $flash = ds_flash_get();
 $filter = $_GET['verdict'] ?? '';
 $all = [];
+$limits = ['history_limit' => 50, 'csv_export' => false];
 if ($dbError === null) {
     $user = $auth->currentUser();
+    $limits = ds_user_limits((int) $user['role']);
     $videos = new VideoRepository($pdo);
-    $all = $videos->listByUser((int) $user['id'], 200, $filter);
+    $all = $videos->listByUser((int) $user['id'], $limits['history_limit'], $filter);
+
+    if (($_GET['export'] ?? '') === 'csv' && $limits['csv_export']) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="deepshield_historique.csv"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Date', 'Fichier', 'Taille', 'Verdict']);
+        foreach ($all as $r) {
+            fputcsv($out, [
+                (string) $r['uploaded_at'],
+                $r['video_name'],
+                ds_format_bytes((int) $r['file_size']),
+                VideoRepository::verdictFromExplinations($r['explinations']),
+            ]);
+        }
+        fclose($out);
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -46,11 +65,16 @@ if ($dbError === null) {
     <?php endif; ?>
 
     <div class="panel" style="margin-bottom:18px;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <a href="historique.php" class="btn-ghost"><?= $filter === '' ? '● ' : '' ?>Tous</a>
-        <a href="historique.php?verdict=R%C3%89EL" class="btn-ghost"><?= $filter === 'RÉEL' ? '● ' : '' ?>RÉEL</a>
-        <a href="historique.php?verdict=SUSPECT" class="btn-ghost"><?= $filter === 'SUSPECT' ? '● ' : '' ?>SUSPECT</a>
-        <a href="historique.php?verdict=DEEPFAKE" class="btn-ghost"><?= $filter === 'DEEPFAKE' ? '● ' : '' ?>DEEPFAKE</a>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="historique.php" class="btn-ghost"><?= $filter === '' ? '● ' : '' ?>Tous</a>
+          <a href="historique.php?verdict=R%C3%89EL" class="btn-ghost"><?= $filter === 'RÉEL' ? '● ' : '' ?>RÉEL</a>
+          <a href="historique.php?verdict=SUSPECT" class="btn-ghost"><?= $filter === 'SUSPECT' ? '● ' : '' ?>SUSPECT</a>
+          <a href="historique.php?verdict=DEEPFAKE" class="btn-ghost"><?= $filter === 'DEEPFAKE' ? '● ' : '' ?>DEEPFAKE</a>
+        </div>
+        <?php if ($limits['csv_export']): ?>
+          <a href="historique.php?<?= $filter !== '' ? 'verdict=' . urlencode($filter) . '&' : '' ?>export=csv" class="btn-ghost">⬇ Exporter en CSV</a>
+        <?php endif; ?>
       </div>
     </div>
 

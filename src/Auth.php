@@ -149,6 +149,33 @@ final class Auth
         }
     }
 
+    /**
+     * Point d'entrée unique pour passer un compte standard en premium.
+     * Aujourd'hui déclenché par une confirmation simulée ; destiné à être
+     * appelé plus tard par un webhook de paiement (Stripe) après
+     * confirmation réelle du paiement, sans changer cette méthode.
+     *
+     * @return array{success:bool, error:?string, email?:string, first_name?:string}
+     */
+    public function upgradeToPremium(int $userId): array
+    {
+        $stmt = $this->pdo->prepare('SELECT role, email, first_name FROM users WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch();
+
+        if ($user === false) {
+            return ['success' => false, 'error' => "Compte introuvable."];
+        }
+        if ((int) $user['role'] !== 2) {
+            return ['success' => false, 'error' => "Ce compte est déjà premium ou administrateur."];
+        }
+
+        $stmt = $this->pdo->prepare('UPDATE users SET role = 1 WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+
+        return ['success' => true, 'error' => null, 'email' => $user['email'], 'first_name' => $user['first_name']];
+    }
+
     /** Valide un token de confirmation d'email et active le compte s'il est correct. */
     public function verifyEmail(string $token): bool
     {

@@ -61,10 +61,11 @@ function ds_handle_upload(string $fieldName, array $allowedExt, int $maxBytes, s
 $store = new ReportStore($config['reports_dir']);
 $videos = new VideoRepository($pdo);
 $user = $auth->currentUser();
+$limits = ds_user_limits((int) $user['role']);
 
 try {
-    $videoPath = ds_handle_upload('video_file', $config['video_extensions'], $config['max_upload_bytes'], $config['upload_dir']);
-    $audioPath = ds_handle_upload('audio_file', $config['audio_extensions'], $config['max_upload_bytes'], $config['upload_dir']);
+    $videoPath = ds_handle_upload('video_file', $config['video_extensions'], $limits['max_upload_bytes'], $config['upload_dir']);
+    $audioPath = ds_handle_upload('audio_file', $config['audio_extensions'], $limits['max_upload_bytes'], $config['upload_dir']);
 
     if ($videoPath === null && $audioPath === null) {
         throw new RuntimeException("Veuillez fournir au moins un fichier vidéo ou audio.");

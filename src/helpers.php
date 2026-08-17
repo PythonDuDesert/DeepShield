@@ -83,3 +83,31 @@ function ds_csrf_verify(?string $token): bool
 {
     return !empty($_SESSION['csrf_token']) && is_string($token) && hash_equals($_SESSION['csrf_token'], $token);
 }
+
+/**
+ * Avantages associés à un rôle (0=Admin, 1=Utilisateur premium, 2=Utilisateur).
+ * Source unique de vérité pour les quotas — à utiliser partout plutôt que de
+ * coder des seuils en dur par rôle.
+ *
+ * @return array{history_limit:int, max_upload_bytes:int, csv_export:bool, label:string}
+ */
+function ds_user_limits(int $role): array
+{
+    global $config;
+
+    if ($role === 0 || $role === 1) {
+        return [
+            'history_limit' => 500,
+            'max_upload_bytes' => (int) ($config['max_upload_bytes'] ?? 209715200),
+            'csv_export' => true,
+            'label' => 'Premium',
+        ];
+    }
+
+    return [
+        'history_limit' => 50,
+        'max_upload_bytes' => 52428800, // 50 Mo
+        'csv_export' => false,
+        'label' => 'Standard',
+    ];
+}
