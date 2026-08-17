@@ -4,7 +4,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 $currentUser = ($auth !== null) ? $auth->currentUser() : null;
 
-$role = $_SESSION['role'];
+$role = $_SESSION['role'] ?? null;
 ?>
 
 <!-- Menu vertical -->
@@ -72,11 +72,12 @@ $role = $_SESSION['role'];
     </nav>
 
     <div class="app-sidebar-footer">
+        <?php if ($currentUser !== null): ?>
         <a href="profile.php" class="user-pill" style="text-decoration:none;<?php echo ($current_page == 'profile.php') ? 'border-color:var(--cyan);' : ''; ?>" title="Mon profil">
-            <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'], 0, 1) . substr($currentUser['last_name'], 0, 1))) ?></span>
+            <span class="user-avatar"><?= e(strtoupper(substr($currentUser['first_name'] ?? '', 0, 1) . substr($currentUser['last_name'] ?? '', 0, 1))) ?></span>
             <div class="user-pill-info">
-                <span class="user-name"><?= e($currentUser['first_name'] . ' ' . $currentUser['last_name']) ?></span>
-                <span class="user-email"><?= e($currentUser['email']) ?></span>
+                <span class="user-name"><?= e(trim(($currentUser['first_name'] ?? '') . ' ' . ($currentUser['last_name'] ?? ''))) ?></span>
+                <span class="user-email"><?= e($currentUser['email'] ?? '') ?></span>
             </div>
         </a>
         <a href="logout.php" class="nav-item" style="margin-bottom:-25px;">
@@ -89,6 +90,20 @@ $role = $_SESSION['role'];
             </div>
             <span>Signaler</span>
         </a>
+        <?php else: ?>
+        <a href="login.php" class="nav-item" style="margin-bottom:-10px;">
+            <div class="nav-icon">
+                <img src="assets/images/user_logo.png" alt="Connexion" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>Connexion</span>
+        </a>
+        <a href="login.php?tab=register" class="nav-item">
+            <div class="nav-icon">
+                <img src="assets/images/user_logo.png" alt="Inscription" style="width:25px; height:25px; object-fit:contain;">
+            </div>
+            <span>S'inscrire</span>
+        </a>
+        <?php endif; ?>
     </div>
 </div>
 

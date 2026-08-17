@@ -1,0 +1,12 @@
+{
+    "status": "error",
+    "error": "Impossible de démarrer le processus d'analyse Python.",
+    "generated_at": "2026-08-10T11:56:57+00:00",
+    "user_id": 2,
+    "uploaded_files": {
+        "video_original_name": "WhatsApp Video 2026-07-12 at 15.26.44.mp4",
+        "audio_original_name": "",
+        "kept_for_retraining": false
+    },
+    "id": "95416d26-9c82-4cdd-8cc8-7874bcc5ab0a"
+}
