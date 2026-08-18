@@ -55,6 +55,23 @@ final class AnalysisRunner
         $env['DEEPSHIELD_AUDIO_MODEL'] =
             $this->config['audio_model'];
 
+        $env['DEEPSHIELD_ML_SRC_DIR'] =
+            $this->config['ml_src_dir'];
+
+        $env['DEEPSHIELD_FACE_MODEL_PATH'] =
+            $this->config['face_model_path'];
+
+        $env['DEEPSHIELD_VIDEO_MODEL'] =
+            $this->config['video_model'];
+
+        // Ne force la variable que si le chemin configuré/deviné existe
+        // vraiment : sinon on laisse le script Python retomber sur son
+        // propre repli (PATH système, puis dossier "ffmpeg" du projet),
+        // qui peut fonctionner différemment sur un autre poste.
+        if (is_file($this->config['ffmpeg_bin'])) {
+            $env['DEEPSHIELD_FFMPEG'] = $this->config['ffmpeg_bin'];
+        }
+
         $descriptorSpec = [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],

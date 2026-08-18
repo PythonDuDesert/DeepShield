@@ -271,7 +271,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
                       <?= e(substr((string) $r['uploaded_at'], 0, 16)) ?>
                   </td>
                   <td>
-                      <span class="badge">
+                      <span class="badge <?= ds_media_type_class($r['media_type']) ?>">
                           <?= e($r['media_type']) ?>
                       </span>
                   </td>

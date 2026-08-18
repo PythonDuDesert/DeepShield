@@ -35,5 +35,4 @@ echo json_encode([
     'bridge_script_found' => $bridgeOk,
     'proc_open_available' => $procOpenOk,
     'database' => ['reachable' => $dbOk, 'error' => $dbError],
-    'mock_mode' => $config['mock_mode'],
 ], JSON_PRETTY_PRINT);
