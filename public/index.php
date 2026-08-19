@@ -57,7 +57,7 @@ $navActive = 'home';
         </div>
         <div class="verdict-cards">
             <div class="verdict-card"><span class="vdot vdot-ok"></span> Vidéo RÉELLE — 94%</div>
-            <div class="verdict-card"><span class="vdot vdot-warn"></span> SUSPECT — 61%</div>
+            <div class="verdict-card"><span class="vdot vdot-warn"></span> SUSPECT — 58%</div>
             <div class="verdict-card"><span class="vdot vdot-danger"></span> DEEPFAKE détecté — 12%</div>
         </div>
     </div>
@@ -79,7 +79,7 @@ $navActive = 'home';
             <div class="stat-label">Frames les plus suspectes</div>
         </div>
         <div class="stat-item reveal">
-            <div class="stat-number">&lt; 1 min</div>
+            <div class="stat-number">&lt; 15 s</div>
             <div class="stat-label">Temps de traitement cible</div>
         </div>
     </div>
@@ -100,7 +100,7 @@ $navActive = 'home';
         <div class="feature-card reveal">
             <div class="feature-icon-wrap">🎙️</div>
             <h3>Analyse audio</h3>
-            <p>Extraction de caractéristiques spectrales (MFCC) pour détecter les voix clonées ou synthétiques. Moteur en cours de développement.</p>
+            <p>Extraction de caractéristiques spectrales pour détecter les voix clonées ou synthétiques.</p>
         </div>
         <div class="feature-card reveal">
             <div class="feature-icon-wrap">📊</div>
@@ -120,7 +120,7 @@ $navActive = 'home';
         <div class="feature-card reveal">
             <div class="feature-icon-wrap">🔒</div>
             <h3>Éthique des données</h3>
-            <p>Les fichiers biométriques ne sont conservés que le temps de l'analyse, sauf consentement explicite au ré-entraînement.</p>
+            <p>Les fichiers envoyés ne sont conservés que le temps de l'analyse, sauf consentement explicite.</p>
         </div>
     </div>
 </section>
@@ -196,17 +196,13 @@ $navActive = 'home';
         </div>
         <div class="footer-section">
             <h4>Équipe</h4>
-            <a href="#">Olivier Yamine</a>
+            <a href="#">Olivier Yammine</a>
             <a href="#">Omar Tanaradje</a>
             <a href="#">Lucas Duhoo</a>
         </div>
     </div>
     <div class="footer-bottom">
         <span>© 2026 DeepShield — Projet pédagogique</span>
-        <div class="footer-status">
-            <div class="hero-badge-dot"></div>
-            Moteur d'analyse opérationnel (mode démonstration)
-        </div>
     </div>
 </footer>
 
