@@ -185,7 +185,7 @@ $faqCategories = [
     <div class="faq-contact">
       <h2>Une question sans réponse ici ?</h2>
       <p>L'équipe DeepShield reste joignable pour toute question sur le projet ou son cahier des charges.</p>
-      <a href="index.php#equipe" class="btn-secondary">Voir l'équipe du projet</a>
+      <a href="assistance.php" class="btn-secondary">Voir l'équipe du projet</a>
     </div>
   </main>
 </div>
