@@ -30,14 +30,18 @@ final class ReportStore
 
     public function load(string $id): ?array
     {
-        if (!preg_match('/^([a-f0-9\-]{36}|\d{1,20})$/', $id)) {
+        if (!preg_match('/^(?:[a-f0-9\-]{36}|\d{1,20}|video_\d{1,20}|audio_\d{1,20})$/', $id)) {
             return null;
         }
         $path = $this->pathFor($id);
         if (!is_file($path)) {
             return null;
         }
-        $data = json_decode((string) file_get_contents($path), true);
+        $data = json_decode(
+            (string) file_get_contents($path),
+            true
+        );
+
         return is_array($data) ? $data : null;
     }
 

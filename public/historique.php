@@ -13,26 +13,6 @@ $limits = ds_user_limits((int) ($currentUser['role'] ?? 2));
 if ($dbError === null) {
     $user = $auth->currentUser();
     $limits = ds_user_limits((int) $user['role']);
-    $videos = new VideoRepository($pdo);
-    $all = $videos->listByUser((int) $user['id'], 200, $filter);
-    $all = $videos->listByUser((int) $user['id'], $limits['history_limit'], $filter);
-
-    if (($_GET['export'] ?? '') === 'csv' && $limits['csv_export']) {
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="deepshield_historique.csv"');
-        $out = fopen('php://output', 'w');
-        fputcsv($out, ['Date', 'Fichier', 'Taille', 'Verdict']);
-        foreach ($all as $r) {
-            fputcsv($out, [
-                (string) $r['uploaded_at'],
-                $r['video_name'],
-                ds_format_bytes((int) $r['file_size']),
-                VideoRepository::verdictFromExplinations($r['explinations']),
-            ]);
-        }
-        fclose($out);
-        exit;
-    }
 
     /*
      * ----------------------------------------------------------
@@ -50,7 +30,7 @@ if ($dbError === null) {
          FROM videos
          WHERE user_id = :user_id
          ORDER BY uploaded_at DESC
-         LIMIT 200'
+         LIMIT ' . $limits['history_limit']
     );
 
     $stmtVideo->execute([
@@ -75,7 +55,7 @@ if ($dbError === null) {
          FROM audios
          WHERE user_id = :user_id
          ORDER BY uploaded_at DESC
-         LIMIT 200'
+         LIMIT ' . $limits['history_limit']
     );
 
     $stmtAudio->execute([
@@ -110,7 +90,6 @@ if ($dbError === null) {
      * ----------------------------------------------------------
      */
     if ($filter !== '') {
-
         $all = array_values(
             array_filter(
                 $all,
@@ -127,9 +106,27 @@ if ($dbError === null) {
     }
 
     /*
-     * Maximum 200 résultats après fusion.
+     * Maximum $limits['history_limit'] résultats après fusion.
      */
-    $all = array_slice($all, 0, 200);
+    $all = array_slice($all, 0, $limits['history_limit']);
+
+    if (($_GET['export'] ?? '') === 'csv' && $limits['csv_export']) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="deepshield_historique.csv"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Date', 'Type', 'Fichier', 'Taille', 'Verdict']);
+        foreach ($all as $r) {
+            fputcsv($out, [
+                (string) $r['uploaded_at'],
+                $r['media_type'],
+                $r['file_name'],
+                ds_format_bytes((int) $r['file_size']),
+                VideoRepository::verdictFromExplinations($r['explinations']),
+            ]);
+        }
+        fclose($out);
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -208,7 +205,7 @@ if ($dbError === null) {
                     <?= e((string) $r['uploaded_at']) ?>
                 </td>
                 <td>
-                    <span class="badge">
+                    <span class="badge <?= ds_media_type_class($r['media_type']) ?>">
                         <?= e($r['media_type']) ?>
                     </span>
                 </td>
@@ -228,7 +225,10 @@ if ($dbError === null) {
                     </span>
                 </td>
                 <td>
-                    <a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a>
+                    <?php
+                        $reportId = ($r['media_type'] === 'VIDÉO' ? 'video_' : 'audio_') . (int) $r['id'];
+                    ?>
+                    <a class="btn-ghost" href="report.php?id=<?= urlencode($reportId) ?>">Voir le rapport</a>
                 </td>
             </tr>
           <?php endforeach; ?>

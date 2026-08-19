@@ -29,6 +29,15 @@ function ds_verdict_class(string $verdict): string
     };
 }
 
+function ds_media_type_class(string $mediaType): string
+{
+    return match ($mediaType) {
+        'VIDÉO' => 'badge-video',
+        'AUDIO' => 'badge-audio',
+        default => 'badge-neutral',
+    };
+}
+
 function ds_verdict_label(string $verdict): string
 {
     return match ($verdict) {

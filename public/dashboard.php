@@ -271,7 +271,7 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
                       <?= e(substr((string) $r['uploaded_at'], 0, 16)) ?>
                   </td>
                   <td>
-                      <span class="badge">
+                      <span class="badge <?= ds_media_type_class($r['media_type']) ?>">
                           <?= e($r['media_type']) ?>
                       </span>
                   </td>
@@ -284,7 +284,10 @@ $logs_for_terminal = function_exists('read_logs_by_day') ? read_logs_by_day($log
                       </span>
                   </td>
                   <td>
-                      <a class="btn-ghost" href="report.php?id=<?= (int) $r['id'] ?>">Voir le rapport</a>
+                      <?php
+                          $reportId = ($r['media_type'] === 'VIDÉO' ? 'video_' : 'audio_') . (int) $r['id'];
+                      ?>
+                      <a class="btn-ghost" href="report.php?id=<?= urlencode($reportId) ?>">Voir le rapport</a>
                   </td>
               </tr>
               <?php endforeach; ?>

@@ -326,7 +326,7 @@ function ds_pct(int $part, int $total): float
                       ) ?>
                   </td>
                   <td>
-                      <span class="badge">
+                      <span class="badge <?= ds_media_type_class($r['media_type']) ?>">
                           <?= e($r['media_type']) ?>
                       </span>
                   </td>

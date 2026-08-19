@@ -77,6 +77,10 @@ return [
     'video_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_VIDEO_EXT', 'mp4,mov'))),
     'audio_extensions'  => array_map('trim', explode(',', ds_env('DEEPSHIELD_AUDIO_EXT', 'wav,mp3'))),
     'audio_model' => 'Gustking/wav2vec2-large-xlsr-deepfake-audio-classification',
+    'ml_src_dir' => ds_path($rootDir, ds_env('DEEPSHIELD_ML_SRC_DIR', './src')),
+    'face_model_path' => ds_path($rootDir, ds_env('DEEPSHIELD_FACE_MODEL_PATH', './storage/det_10g.onnx')),
+    'video_model' => ds_env('DEEPSHIELD_VIDEO_MODEL', 'yermandy/GenD_CLIP_L_14'),
+    'ffmpeg_bin' => ds_path($rootDir, ds_env('DEEPSHIELD_FFMPEG', './ffmpeg-2026-08-09-git-6bbc22dc09-essentials_build/bin/ffmpeg.exe')),
     'auto_delete_uploads' => ds_env('DEEPSHIELD_AUTO_DELETE_UPLOADS', '1') === '1',
     'session_idle_timeout' => (int) ds_env('SESSION_IDLE_TIMEOUT', 900),
     'mail' => [
