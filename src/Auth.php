@@ -302,6 +302,47 @@ final class Auth
         return ['success' => true, 'error' => null];
     }
 
+    /**
+     * Suppression volontaire de son propre compte (archivé, comme les
+     * suppressions faites par un admin dans gestion_users.php).
+     *
+     * @return array{success:bool, error:?string, email?:string, first_name?:string, last_name?:string}
+     */
+    public function deleteAccount(int $userId, string $currentPassword): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch();
+
+        if ($user === false || !password_verify($currentPassword, $user['password_hash'])) {
+            return ['success' => false, 'error' => "Mot de passe incorrect."];
+        }
+
+        $log = $this->pdo->prepare(
+            'INSERT INTO account_deletion_logs (user_id, first_name, last_name, email, role, reason, deleted_at)
+             VALUES (:user_id, :first_name, :last_name, :email, :role, :reason, NOW())'
+        );
+        $log->execute([
+            'user_id' => $user['id'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+            'reason' => 'Suppression volontaire par le titulaire du compte.',
+        ]);
+
+        $stmt = $this->pdo->prepare('DELETE FROM users WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+
+        return [
+            'success' => true,
+            'error' => null,
+            'email' => $user['email'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+        ];
+    }
+
     private function passwordError(string $password): ?string
     {
         if (strlen($password) < 8 || strlen($password) > 72) {

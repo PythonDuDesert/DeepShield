@@ -253,12 +253,14 @@ function log_profile_created($new_user_id, $new_user_email, $first_name = null, 
  * @param string $email Email de l'utilisateur supprimé
  * @param array $reasons Raison de la suppression
  */
-function log_profile_deleted($user_id, $email, $reasons = []) { 
-   
+function log_profile_deleted($user_id, $email, $reason = '') {
+
     return write_log(
         'warning',
         'profile_deleted',
-        "L'utilisateur $user_id ($email) a supprimé son profile: $reasons",
+        "L'utilisateur $user_id ($email) a supprimé son profil" . ($reason !== '' ? " : $reason" : ""),
+        $user_id,
+        $email
     );
 }
 

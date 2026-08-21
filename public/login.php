@@ -17,6 +17,7 @@ $registerError = null;
 $registerSuccess = false;
 $resendMessage = null;
 $sessionExpired = ($_GET['expired'] ?? '') === '1';
+$accountDeleted = ($_GET['deleted'] ?? '') === '1';
 $initialTab = ($_GET['tab'] ?? '') === 'register' ? 'register' : 'login';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
@@ -117,6 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $dbError === null) {
         <div class="auth-notice" style="margin-top:0;">
           <span class="icon"></span>
           <span>Session expirée pour inactivité. Merci de vous reconnecter.</span>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($accountDeleted): ?>
+        <div class="auth-notice" style="margin-top:0;">
+          <span class="icon">👋</span>
+          <span>Votre compte a bien été supprimé. Merci d'avoir utilisé DeepShield.</span>
         </div>
       <?php endif; ?>
 

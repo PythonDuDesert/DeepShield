@@ -11,6 +11,7 @@ $roleLabels = [0 => 'Administrateur', 1 => 'Utilisateur premium', 2 => 'Utilisat
 
 $infoError = null;
 $passwordError = null;
+$deleteError = null;
 $assistError = null;
 $assistSuccess = false;
 $subjectValue = '';
@@ -115,6 +116,22 @@ if ($dbError === null) {
                 header('Location: profile.php#securite');
                 exit;
             }
+        }
+
+        // ── Suppression du compte ──
+        if ($action === 'delete_account') {
+            $currentPasswordForDelete = (string) ($_POST['delete_password'] ?? '');
+            $result = $auth->deleteAccount($userId, $currentPasswordForDelete);
+
+            if ($result['success']) {
+                log_profile_deleted($userId, $result['email'], 'Suppression depuis la page profil.');
+                sendAccountDeletedEmail($result['email'], $result['first_name']);
+                $auth->logout();
+                header('Location: login.php?deleted=1');
+                exit;
+            }
+
+            $deleteError = $result['error'];
         }
 
         // ── Nouvelle demande d'assistance ──
@@ -283,6 +300,25 @@ $assistStatusBadge = ['nouveau' => 'badge-warn', 'lu' => 'badge-neutral', 'resol
             </div>
           </div>
           <button type="submit" class="btn-primary" style="margin-top:16px;">Mettre à jour le mot de passe</button>
+        </form>
+      </section>
+
+      <section class="panel" style="margin-top:20px;border-color:rgba(248,113,113,0.35);">
+        <h2 style="color:var(--danger);">Supprimer mon compte</h2>
+        <p class="muted">Cette action est définitive : votre compte et vos analyses ne seront plus accessibles.</p>
+
+        <?php if ($deleteError): ?>
+          <p class="error" style="margin-top:16px;"><?= e($deleteError) ?></p>
+        <?php endif; ?>
+
+        <form method="post" onsubmit="return confirm('Supprimer définitivement votre compte DeepShield ? Cette action est irréversible.');" style="margin-top:16px;max-width:420px;">
+          <input type="hidden" name="action" value="delete_account">
+          <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+          <div class="field">
+            <label for="delete_password">Mot de passe actuel</label>
+            <input type="password" id="delete_password" name="delete_password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top:16px;background:var(--danger);">Supprimer définitivement mon compte</button>
         </form>
       </section>
     </div>

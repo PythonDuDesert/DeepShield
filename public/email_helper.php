@@ -122,6 +122,18 @@ function sendPremiumUpgradeEmail($to, $first_name) {
 }
 
 /**
+ * Email de confirmation de suppression de compte
+ */
+function sendAccountDeletedEmail($to, $first_name) {
+    $subject = '👋 Votre compte DeepShield a été supprimé';
+    $body = "<h2>Bonjour $first_name,</h2>
+<p>Votre compte DeepShield et les données associées ont bien été supprimés, à votre demande.</p>
+<p>Si vous n'êtes pas à l'origine de cette suppression, contactez immédiatement le support.</p>";
+
+    return send_deepshield_email($to, $subject, $body);
+}
+
+/**
  * Email de notification suite à un changement de mot de passe
  */
 function sendPasswordChangedEmail($to, $first_name) {
