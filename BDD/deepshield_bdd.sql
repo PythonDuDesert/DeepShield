@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 17 août 2026 à 17:08
+-- Généré le : ven. 21 août 2026 à 13:07
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS `account_deletion_logs` (
   `reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `deleted_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `account_deletion_logs`
 --
 
 INSERT INTO `account_deletion_logs` (`id`, `user_id`, `first_name`, `last_name`, `email`, `role`, `reason`, `deleted_at`) VALUES
-(1, 5, '1', '2', '1@gmail.com', 2, 'Suppression manuelle via la gestion des utilisateurs.', '2026-08-03 13:58:23');
+(2, 6, 'Jean', 'Dupont', 'jean.dupont@gmail.com', 2, 'Suppression volontaire par le titulaire du compte.', '2026-08-21 15:05:45');
 
 -- --------------------------------------------------------
 
@@ -166,17 +166,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   `reset_token_expires` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Déchargement des données de la table `users`
 --
 
 INSERT INTO `users` (`id`, `email`, `password_hash`, `first_name`, `last_name`, `profile_photo`, `role`, `is_active`, `failed_login_attempts`, `created_at`, `updated_at`, `last_login`, `last_try_login`, `email_token`, `email_token_expires`, `reset_token`, `reset_token_expires`) VALUES
-(1, 'olivier.yammine@gmail.com', '$2y$10$eehhFsCdUDkGO68QLBrQ0ux8E17MOsJozXRzf/9jQYTN5ibYe0Neq', 'Olivier', 'YAMMINE', 'default-avatar.png', 0, 1, 0, '2026-07-13 10:25:28', '2026-08-17 16:57:51', '2026-08-17 16:57:51', '2026-08-17 16:36:23', NULL, NULL, 'c23da4eb36bf84b75c5e26f825de110ee71afcb02c1ca983f57f9f1be7ebaf26', '2026-08-10 15:01:26'),
-(2, 'omar.tanaradje@gmail.com', '$2y$10$m9U9YXcQze4UWJ2CdRbWj.PkadgYkJv/1o85uG1yZDmwYY46Yqx8K', 'Omar', 'TANARADJE', 'default-avatar.png', 0, 1, 0, '2026-07-13 12:21:30', '2026-08-17 16:57:03', '2026-08-17 16:57:03', NULL, NULL, NULL, NULL, NULL),
-(3, 'lucas.duhoo@gmail.com', '$2y$10$K3qZRkKXY5X4d4lEM4dI4uZntfu/CzGEJK3gmaruE/3d8xaM2KNu.', 'Lucas', 'DUHOO', 'default-avatar.png', 0, 1, 0, '2026-07-13 12:21:52', '2026-08-17 16:53:45', '2026-08-17 16:53:45', '2026-08-17 16:40:44', NULL, NULL, NULL, NULL),
-(4, 'test@gmail.com', '$2y$10$sSqMm/rLVZBL/5sTS5NIueC8i06Oj0/hAKCMYOT9M73x/4LdgpBpq', 'Test', 'TESTEUR', 'default-avatar.png', 2, 1, 0, '2026-08-03 11:44:34', '2026-08-17 16:47:14', '2026-08-17 16:47:14', '2026-08-17 11:48:09', NULL, NULL, NULL, NULL);
+(1, 'olivier.yammine@gmail.com', '$2y$10$eehhFsCdUDkGO68QLBrQ0ux8E17MOsJozXRzf/9jQYTN5ibYe0Neq', 'Olivier', 'YAMMINE', 'default-avatar.png', 0, 1, 0, '2026-07-13 10:25:28', '2026-08-21 13:05:53', '2026-08-21 13:05:53', '2026-08-17 16:36:23', NULL, NULL, 'c23da4eb36bf84b75c5e26f825de110ee71afcb02c1ca983f57f9f1be7ebaf26', '2026-08-10 15:01:26'),
+(2, 'omar.tanaradje@gmail.com', '$2y$10$m9U9YXcQze4UWJ2CdRbWj.PkadgYkJv/1o85uG1yZDmwYY46Yqx8K', 'Omar', 'TANARADJE', 'default-avatar.png', 0, 1, 0, '2026-07-13 12:21:30', '2026-08-21 13:07:05', '2026-08-21 13:07:05', NULL, NULL, NULL, NULL, NULL),
+(3, 'lucas.duhoo@gmail.com', '$2y$10$K3qZRkKXY5X4d4lEM4dI4uZntfu/CzGEJK3gmaruE/3d8xaM2KNu.', 'Lucas', 'DUHOO', 'default-avatar.png', 0, 1, 0, '2026-07-13 12:21:52', '2026-08-20 14:49:45', '2026-08-17 16:53:45', '2026-08-17 16:40:44', NULL, NULL, NULL, NULL),
+(4, 'test@gmail.com', '$2y$10$sSqMm/rLVZBL/5sTS5NIueC8i06Oj0/hAKCMYOT9M73x/4LdgpBpq', 'Test', 'TESTEUR', 'default-avatar.png', 2, 1, 0, '2026-08-03 11:44:34', '2026-08-18 20:55:52', '2026-08-18 20:55:52', '2026-08-17 11:48:09', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

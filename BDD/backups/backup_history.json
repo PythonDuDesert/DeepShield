@@ -190,5 +190,59 @@
         "action": "création manuelle",
         "file": "deepshield_bdd-2026-08-17_19-09-40.sql",
         "details": "Créé par Olivier YAMMINE. Tables: 6, Lignes: 50, Taille: 17.94 KB"
+    },
+    {
+        "timestamp": "2026-08-19 12:08:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260819_120801.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-19 13:08:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260819_130801.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-20 14:41:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260820_144101.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-20 15:41:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260820_154101.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-20 16:41:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260820_164101.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-20 17:41:01",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260820_174101.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-20 17:42:01",
+        "action": "auto-suppression",
+        "file": "deepshield_auto_20260806_163601.sql",
+        "details": "Rotation automatique (30 sauvegardes maximum)"
+    },
+    {
+        "timestamp": "2026-08-21 15:04:03",
+        "action": "auto-création",
+        "file": "deepshield_auto_20260821_150402.sql",
+        "details": "Sauvegarde SQL créée (15.13 KB)."
+    },
+    {
+        "timestamp": "2026-08-21 15:05:01",
+        "action": "auto-suppression",
+        "file": "deepshield_auto_20260810_131901.sql",
+        "details": "Rotation automatique (30 sauvegardes maximum)"
     }
 ]
