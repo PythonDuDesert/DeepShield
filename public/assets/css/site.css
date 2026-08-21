@@ -22,8 +22,8 @@
     --gradient-glow: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(34,211,238,0.16), transparent);
 
     --font-display: 'Verdana', sans-serif;
-    --font-body:    'DM Sans', sans-serif;
-    --font-mono:    'Gill Sans', monospace;
+    --font-body:    'Arial', sans-serif;
+    --font-mono:    'Calibri', monospace;
 }
 
 html { scroll-behavior: smooth; }
